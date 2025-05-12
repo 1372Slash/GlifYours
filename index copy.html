@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Image Template Generator</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://unpkg.com/cropperjs@1.5.13/dist/cropper.min.css" rel="stylesheet"/>
+  <style>
+    body {
+      background-color: #121212;
+      color: #ffffff;
+    }
+    .accent {
+      color: #F83E01;
+    }
+    .btn-accent {
+      background-color: #F83E01;
+      color: white;
+    }
+    .btn-accent:hover {
+      background-color: #d63500;
+      color: white;
+    }
+    .preview-container {
+      max-width: 500px;
+      margin: auto;
+    }
+    #imagePreview {
+      max-width: 100%;
+      height: auto;
+    }
+    #croppedContainer {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container py-5">
+    <h1 class="text-center mb-4">Image <span class="accent">Template</span> Generator</h1>
+
+    <div class="row justify-content-center mb-4">
+      <div class="col-md-6">
+        <div class="mb-3">
+          <label class="form-label">Select Template</label>
+          <select class="form-select bg-dark text-white" id="templateSelect">
+            <option value="profile">Profile Picture (1:1)</option>
+            <option value="ticket">Ticket (16:9)</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Your Name</label>
+          <input type="text" class="form-control bg-dark text-white" id="userName">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Upload Image</label>
+          <input type="file" class="form-control bg-dark text-white" id="userImage" accept="image/*">
+        </div>
+
+        <div id="cropperContainer" class="text-center mb-3">
+          <img id="cropperImage" style="max-width: 100%;" />
+          <button id="cropButton" class="btn btn-accent mt-2">Save Crop</button>
+        </div>
+
+        <button class="btn btn-accent w-100" id="generateButton" style="display:none;" onclick="generatePreview()">Generate Preview</button>
+      </div>
+    </div>
+
+    <div class="preview-container text-center" id="croppedContainer">
+      <h3 class="mb-3">Preview</h3>
+      <canvas id="previewCanvas" style="max-width: 100%;"></canvas>
+      <button class="btn btn-accent mt-3" onclick="exportImage()">Export Image</button>
+    </div>
+  </div>
+
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="toast" class="toast" role="alert">
+      <div class="toast-body"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/cropperjs@1.5.13/dist/cropper.min.js"></script>
+
+  <script>
+    const validCodes = ['CODE1', 'CODE2', 'CODE3', 'CODE4', 'CODE5'];
+    const templates = {
+      profile: 'template_profile.png',
+      ticket: 'template_ticket.png'
+    };
+
+    let cropper;
+    let croppedImageDataURL = null;
+
+    document.getElementById('userImage').addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const image = document.getElementById('cropperImage');
+      image.src = URL.createObjectURL(file);
+
+      image.onload = () => {
+        if (cropper) {
+          cropper.destroy();
+        }
+        cropper = new Cropper(image, {
+          aspectRatio: 1,
+          viewMode: 1,
+        });
+        document.getElementById('cropperContainer').style.display = 'block';
+        document.getElementById('generateButton').style.display = 'none';
+        document.getElementById('croppedContainer').style.display = 'none';
+      };
+    });
+
+    document.getElementById('cropButton').addEventListener('click', function() {
+      if (cropper) {
+        const canvas = cropper.getCroppedCanvas();
+        croppedImageDataURL = canvas.toDataURL('image/png');
+
+        cropper.destroy();
+        cropper = null;
+        document.getElementById('cropperContainer').style.display = 'none';
+        document.getElementById('generateButton').style.display = 'block';
+      }
+    });
+
+    async function loadCustomFont() {
+      const font = new FontFace('NAURYZREDKEDS', 'url(../assets/fonts/NAURYZREDKEDS.ttf)');
+      await font.load();
+      document.fonts.add(font);
+    }
+
+    async function generatePreview() {
+      const name = document.getElementById('userName').value;
+      const template = document.getElementById('templateSelect').value;
+
+      if (!name || !croppedImageDataURL) {
+        showToast('Please complete the image cropping first');
+        return;
+      }
+
+      await loadCustomFont();
+
+      const canvas = document.getElementById('previewCanvas');
+      const ctx = canvas.getContext('2d');
+
+      const templateImg = new Image();
+      templateImg.src = templates[template];
+      await new Promise(resolve => templateImg.onload = resolve);
+
+      canvas.width = templateImg.width;
+      canvas.height = templateImg.height;
+
+      const userImg = new Image();
+      userImg.src = croppedImageDataURL;
+      await new Promise(resolve => userImg.onload = resolve);
+
+      await scaleAndDrawImage(ctx, userImg, canvas.width, canvas.height, name);
+      ctx.drawImage(templateImg, 0, 0);
+
+      document.getElementById('croppedContainer').style.display = 'block';
+      showToast('Preview generated successfully!');
+    }
+
+    async function scaleAndDrawImage(ctx, img, targetWidth, targetHeight, name) {
+      const template = document.getElementById('templateSelect').value;
+
+      if (template === 'profile') {
+        const scaledWidth = targetWidth * 0.93;
+        const scaledHeight = targetHeight * 0.93;
+        const x = (targetWidth - scaledWidth) / 2;
+        const y = (targetHeight - scaledHeight) / 2;
+        ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
+
+        ctx.fillStyle = '#F83E01';
+        ctx.font = '40px NAURYZREDKEDS';
+        ctx.textBaseline = 'bottom';
+        ctx.textAlign = 'left';
+        ctx.fillText(name, 40, targetHeight - 30);
+      } else if (template === 'ticket') {
+        ctx.save();
+        const cx = 340, cy = 540, radius = 217;
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+        ctx.clip();
+        ctx.drawImage(img, cx - radius, cy - radius, radius * 2, radius * 2);
+        ctx.restore();
+
+        ctx.font = '80px NAURYZREDKEDS';
+        ctx.fillStyle = '#F83E01';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(name, targetWidth / 2 + 200, targetHeight / 2);
+      }
+    }
+
+    async function exportImage() {
+      const code = prompt('Enter export code:');
+      if (!code || !validCodes.includes(code)) {
+        alert('Invalid code!');
+        return;
+      }
+
+      const canvas = document.getElementById('previewCanvas');
+      const link = document.createElement('a');
+      link.download = 'generated_image.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.querySelector('.toast-body').textContent = message;
+      new bootstrap.Toast(toast).show();
+    }
+  </script>
+</body>
+</html>
