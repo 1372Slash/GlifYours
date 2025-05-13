@@ -139,3 +139,124 @@
       opacity: 0;
       pointer-events: none;
     }
+    .loading_container {
+            position: fixed;
+            z-index: 10;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .loading_app_bg {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #4e54c8, #8f94fb);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+        
+        .loading_logo {
+            font-size: 42px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .loading_welcome {
+            font-size: 24px;
+            margin-bottom: 40px;
+        }
+        
+        .loading_overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #001259;
+            animation: loading_fadeOut 1.5s ease-in-out forwards;
+            z-index: 1000;
+        }
+        
+        .loading_checkmark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: loading_checkmarkAnim 1.5s ease-in-out forwards;
+        }
+        
+        /* .loading_checkmark::before {
+            content: '';
+            width: 40px;
+            height: 25px;
+            border-bottom: 10px solid white;
+            border-left: 10px solid white;
+            transform: rotate(-45deg) translate(5px, -5px);
+        } */
+        
+        @keyframes loading_fadeOut {
+            0% {
+                opacity: 1;
+            }
+            40% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+        
+        @keyframes loading_checkmarkAnim {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0;
+            }
+            20% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 1;
+            }
+            40% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            90% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0;
+            }
+        }
+        
+        .loading_restart_btn {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 25px;
+            background-color: #4e54c8;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+        }
+        
+        .loading_restart_btn:hover {
+            background-color: #3a3f9c;
+        }
