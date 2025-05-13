@@ -3,224 +3,718 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Image Template Generator</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <title>GLIF | Yours</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/cropperjs@1.5.13/dist/cropper.min.js"></script>
   <link href="https://unpkg.com/cropperjs@1.5.13/dist/cropper.min.css" rel="stylesheet"/>
+  <link rel="icon" type="image/png" href="../assets/images/Gllif_border.png">
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            accent: '#F83E01',
+            'accent-hover': '#d63500',
+            dark: '#121212',
+            'dark-light': '#1E1E1E'
+          },
+          animation: {
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'fade-in': 'fadeIn 0.5s ease-in-out',
+            'slide-up': 'slideUp 0.5s ease-in-out',
+            'slide-in': 'slideIn 0.5s ease-in-out',
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' },
+            },
+            slideUp: {
+              '0%': { transform: 'translateY(20px)', opacity: '0' },
+              '100%': { transform: 'translateY(0)', opacity: '1' },
+            },
+            slideIn: {
+              '0%': { transform: 'translateX(-20px)', opacity: '0' },
+              '100%': { transform: 'translateX(0)', opacity: '1' },
+            }
+          }
+        }
+      }
+    }
+  </script>
   <style>
+    @font-face {
+      font-family: NAURYZREDKEDS;
+      src: url(../assets/fonts/NAURYZREDKEDS.ttf);
+    }
+    @font-face {
+      font-family: SpaceGro;
+      src: url(../assets/fonts/SpaceGrotesk-Medium.ttf);
+    }
+    
+    .font-nauryz {
+      font-family: NAURYZREDKEDS, sans-serif;
+    }
+    
+    .font-space {
+      font-family: SpaceGro, sans-serif;
+    }
+    
     body {
-      background-color: #121212;
-      color: #ffffff;
+      background-image: url('../assets/images/background.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
     }
-    .accent {
-      color: #F83E01;
+    
+    .glassmorphism {
+      background: rgba(30, 30, 30, 0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
-    .btn-accent {
+
+    /* Progress bar styles */
+    .progress-bar-container {
+      width: 100%;
+      height: 4px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    
+    .progress-bar {
+      height: 100%;
+      background-color: #F83E01;
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+    
+    .custom-file-input::-webkit-file-upload-button {
+      visibility: hidden;
+      width: 0;
+    }
+    
+    .custom-file-input::before {
+      content: 'Choose Image';
+      display: inline-block;
+      background: #F83E01;
+      color: white;
+      border-radius: 6px;
+      padding: 8px 16px;
+      outline: none;
+      white-space: nowrap;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    
+    .custom-file-input:hover::before {
+      background: #d63500;
+    }
+    
+    .file-name {
+      margin-left: 12px;
+      font-size: 14px;
+    }
+    
+    .template-option {
+      position: relative;
+      transition: transform 0.2s ease-in-out;
+      cursor: pointer;
+    }
+    
+    .template-option:hover {
+      transform: translateY(-5px);
+    }
+    
+    .template-option.selected {
+      box-shadow: 0 0 0 3px #F83E01;
+    }
+    
+    .template-option.selected::after {
+      content: '✓';
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 24px;
+      height: 24px;
       background-color: #F83E01;
       color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
     }
-    .btn-accent:hover {
-      background-color: #d63500;
+        
+
+    .locked-template {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .locked-template img {
+      filter: blur(8px);
+      transition: filter 0.5s ease;
+    }
+
+    .locked-template.unlocked img {
+      filter: blur(0);
+    }
+
+    .lock-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       color: white;
+      transition: opacity 0.5s ease;
     }
-    .preview-container {
-      max-width: 500px;
-      margin: auto;
+
+    .lock-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
     }
-    #imagePreview {
-      max-width: 100%;
-      height: auto;
-    }
-    #croppedContainer {
-      display: none;
-    }
+
   </style>
 </head>
-<body>
-  <div class="container py-5">
-    <h1 class="text-center mb-4">Image <span class="accent">Template</span> Generator</h1>
+<body class="min-h-screen text-white font-space">
+  <div x-data="{
+    step: 1,
+    category: 'profile', 
+    templateVariant: 'style1',
+    userName: '',
+    fileName: '',
+    validCodes: ['CODE1', 'CODE2', 'CODE3', 'CODE4', 'CODE5', 'ADMINTERSAYANG'],
+    cropper: null,
+    croppedImageDataURL: null,
+    templates: {
+      profile: {
+        style1: '../assets/images/template_profile.png',
+        style2: '../assets/images/template_profile_style2.png',
+        style3: '../assets/images/template_profile_style3.png',
+        admin: '../assets/images/template_profile_admin.png'
+      },
+      ticket: {
+        style1: '../assets/images/template_ticket.png',
+        style2: '../assets/images/template_ticket_style2.png',
+        style3: '../assets/images/template_ticket_style3.png',
+        admin: '../assets/images/template_ticket_admin.png'
+      }
+    },
 
-    <div class="row justify-content-center mb-4">
-      <div class="col-md-6">
-        <div class="mb-3">
-          <label class="form-label">Select Template</label>
-          <select class="form-select bg-dark text-white" id="templateSelect">
-            <option value="profile">Profile Picture (1:1)</option>
-                    <option value="ticket">Ticket (16:9)</option>
-          </select>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label">Your Name</label>
-          <input type="text" class="form-control bg-dark text-white" id="userName">
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label">Upload Image</label>
-          <input type="file" class="form-control bg-dark text-white" id="userImage" accept="image/*">
-        </div>
-
-        <div id="cropperContainer" class="text-center mb-3">
-          <img id="cropperImage" style="max-width: 100%;" />
-          <button id="cropButton" class="btn btn-accent mt-2">Save Crop</button>
-        </div>
-
-        <button class="btn btn-accent w-100" id="generateButton" style="display:none;" onclick="generatePreview()">Generate Preview</button>
-      </div>
-    </div>
-
-    <div class="preview-container text-center" id="croppedContainer">
-      <h3 class="mb-3">Preview</h3>
-      <canvas id="previewCanvas" style="max-width: 100%;"></canvas>
-      <button class="btn btn-accent mt-3" onclick="exportImage()">Export Image</button>
-    </div>
-  </div>
-
-  <div class="toast-container position-fixed bottom-0 end-0 p-3">
-    <div id="toast" class="toast" role="alert">
-      <div class="toast-body"></div>
-    </div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://unpkg.com/cropperjs@1.5.13/dist/cropper.min.js"></script>
-
-  <script>
-    const validCodes = ['CODE1', 'CODE2', 'CODE3', 'CODE4', 'CODE5'];
-    const templates = {
-      profile: 'template_profile.png',
-      ticket: 'template_ticket.png'
-    };
-
-    let cropper;
-    let croppedImageDataURL = null;
-
-    document.getElementById('userImage').addEventListener('change', function(event) {
+    unlockedTemplates: {
+      profile: {
+        admin: false
+      },
+      ticket: {
+        admin: false
+      }
+      
+    },
+    notification: { show: false, message: '' },
+       readyToCrop: false,
+    
+    showNotification(message) {
+      this.notification.message = message;
+      this.notification.show = true;
+      setTimeout(() => this.notification.show = false, 3000);
+    },
+    
+    handleImageUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
+      
+      this.fileName = file.name;
+      
+      this.readyToCrop = true;
+
+      this.showNotification('Image uploaded! Ready to crop.');
+
+    },
+
+    
+
+    proceedToCrop() {
+
+      if (!this.readyToCrop) {
+
+        this.showNotification('Please upload an image first!');
+
+        return;
+
+      }
+
+      
+
+      if (!this.userName) {
+
+        this.showNotification('Please enter your name before continuing!');
+
+        return;
+
+      }
+
+      
+
+      // Check if user selected a admin template but hasn't unlocked it
+
+      if ((this.templateVariant === 'admin') && 
+
+          !this.unlockedTemplates[this.category].admin) {
+
+        this.showNotification('Please unlock the admin template first!');
+
+        return;
+
+      }
+
 
       const image = document.getElementById('cropperImage');
-      image.src = URL.createObjectURL(file);
+          const fileInput = document.getElementById('fileInput');
 
+      image.src = URL.createObjectURL(fileInput.files[0]);
+      
       image.onload = () => {
-        if (cropper) {
-          cropper.destroy();
+        if (this.cropper) {
+          this.cropper.destroy();
         }
-        cropper = new Cropper(image, {
-          aspectRatio: 1,
+        
+        this.cropper = new Cropper(image, {
+          aspectRatio: 1, // Always use 1:1 aspect ratio as requested
           viewMode: 1,
+          guides: true,
+          autoCropArea: 0.8,
         });
-        document.getElementById('cropperContainer').style.display = 'block';
-        document.getElementById('generateButton').style.display = 'none';
-        document.getElementById('croppedContainer').style.display = 'none';
+        
+        this.step = 2;
       };
-    });
-
-    document.getElementById('cropButton').addEventListener('click', function() {
-      if (cropper) {
-        const canvas = cropper.getCroppedCanvas();
-        croppedImageDataURL = canvas.toDataURL('image/png');
-
-        // Hide cropper
-        cropper.destroy();
-        cropper = null;
-        document.getElementById('cropperContainer').style.display = 'none';
-        document.getElementById('generateButton').style.display = 'block';
+    },
+    
+    cropImage() {
+      if (this.cropper) {
+        const canvas = this.cropper.getCroppedCanvas();
+        this.croppedImageDataURL = canvas.toDataURL('image/png');
+        
+        // Reset cropper
+        this.cropper.destroy();
+        this.cropper = null;
+        
+        this.step = 3;
+        this.generatePreview();
       }
-    });
-
-    async function loadCustomFont() {
+    },
+    
+    async loadCustomFont() {
       const font = new FontFace('NAURYZREDKEDS', 'url(../assets/fonts/NAURYZREDKEDS.ttf)');
       await font.load();
       document.fonts.add(font);
-    }
-
-    async function generatePreview() {
-      const name = document.getElementById('userName').value;
-      const template = document.getElementById('templateSelect').value;
-
-      if (!name || !croppedImageDataURL) {
-        showToast('Please complete the image cropping first');
+    },
+    
+    async generatePreview() {
+      if (!this.userName || !this.croppedImageDataURL) {
+        this.showNotification('Please enter your name and crop your image');
         return;
       }
-
-      await loadCustomFont();
-
+      
+      await this.loadCustomFont();
+      
       const canvas = document.getElementById('previewCanvas');
       const ctx = canvas.getContext('2d');
-
+      
       const templateImg = new Image();
-      templateImg.src = templates[template];
+      templateImg.src = this.templates[this.category][this.templateVariant];
       await new Promise(resolve => templateImg.onload = resolve);
-
+      
       canvas.width = templateImg.width;
       canvas.height = templateImg.height;
-
+      
       const userImg = new Image();
-      userImg.src = croppedImageDataURL;
+      userImg.src = this.croppedImageDataURL;
       await new Promise(resolve => userImg.onload = resolve);
-
-      await scaleAndDrawImage(ctx, userImg, canvas.width, canvas.height);
-
+      
+      await this.scaleAndDrawImage(ctx, userImg, canvas.width, canvas.height);
+      
       ctx.drawImage(templateImg, 0, 0);
-
-      ctx.fillStyle = '#F83E01';
+      
+      ctx.fillStyle = '#FFFFFF';
       ctx.font = '40px NAURYZREDKEDS';
-      ctx.fillText(name, 50, canvas.height - 50);
-
-      document.getElementById('croppedContainer').style.display = 'block';
-      showToast('Preview generated successfully!');
-    }
-
-    async function scaleAndDrawImage(ctx, img, targetWidth, targetHeight) {
-      const template = document.getElementById('templateSelect').value;
-      if (template === 'profile') {
+      
+      // Adjust text position based on template type
+      if (this.category === 'profile') {
+        ctx.fillText(this.userName, 50, canvas.height - 50);
+      } else if (this.category === 'ticket') {
+        // Position may vary based on ticket template style
+        ctx.fillText(this.userName, 700, 600);
+      }
+      
+      this.showNotification('Preview generated successfully!');
+    },
+    
+    async scaleAndDrawImage(ctx, img, targetWidth, targetHeight) {
+      if (this.category === 'profile') {
         const scaledWidth = targetWidth * 0.93;
         const scaledHeight = targetHeight * 0.93;
         const x = (targetWidth - scaledWidth) / 2;
         const y = (targetHeight - scaledHeight) / 2;
         ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
-      } else if (template === 'ticket') {
-        // Draw user image at circle on left (estimate circle center)
+      } else if (this.category === 'ticket') {
+        // Draw user image at circle on left for ticket template
         ctx.save();
-        const cx = 340, cy = 540, radius = 217;
+        
+        // Positions may need adjustment based on the specific ticket template style
+        let cx, cy, radius;
+        
+         if (this.templateVariant === 'style1') {
+          cx = 340; cy = 540; radius = 217;
+        } else if (this.templateVariant === 'style2') {
+          cx = 340; cy = 540; radius = 217;  // Adjust these values for style2
+        } else if (this.templateVariant === 'style3') {
+          cx = 340; cy = 540; radius = 217;  // Adjust these values for style3
+        } else if (this.templateVariant === 'admin') {
+          cx = 340; cy = 540; radius = 217;  // Adjust these values for admin
+
+        }
+        
         ctx.beginPath();
         ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
         ctx.clip();
         ctx.drawImage(img, cx - radius, cy - radius, radius * 2, radius * 2);
         ctx.restore();
-        ctx.font = '120px NAURYZ';
-        ctx.fillStyle = '#ffffff';
-        ctx.fillText(name, 700, 600);
       }
-    }
-
-    // async function scaleAndDrawImage(ctx, img, targetWidth, targetHeight) {
-    //   const scaledWidth = targetWidth * 0.93;
-    //   const scaledHeight = targetHeight * 0.93;
-    //   const x = (targetWidth - scaledWidth) / 2;
-    //   const y = (targetHeight - scaledHeight) / 2;
-    //   ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
+    },
     
-
-    async function exportImage() {
+    exportImage() {
       const code = prompt('Enter export code:');
-      if (!code || !validCodes.includes(code)) {
+      if (!code || !this.validCodes.includes(code)) {
         alert('Invalid code!');
         return;
       }
-
+      
       const canvas = document.getElementById('previewCanvas');
       const link = document.createElement('a');
-      link.download = 'generated_image.png';
+      link.download = `glif_${this.category}_${this.templateVariant}.png`;
       link.href = canvas.toDataURL('image/png');
       link.click();
+      
+      this.showNotification('Image downloaded successfully!');
+    },
+    
+    selectCategory(cat) {
+      this.category = cat;
+    },
+    
+    selectTemplate(variant) {
+      this.templateVariant = variant;
+        },
+
+    
+
+    unlockadminTemplate() {
+      const code = prompt('Enter unlock code for secret template:');
+      if (code === 'ADMINTERSAYANG') {
+        this.unlockedTemplates[this.category].admin = true;
+        this.templateVariant = 'admin';
+        this.showNotification('Admin template unlocked!');
+      } else {
+        this.showNotification('Invalid unlock code!');
+      }
     }
 
-    function showToast(message) {
-      const toast = document.getElementById('toast');
-      toast.querySelector('.toast-body').textContent = message;
-      new bootstrap.Toast(toast).show();
-    }
-  </script>
+  }" class="container mx-auto py-12 px-4 md:px-6">
+  
+    <!-- Header -->
+    <header class="text-center mb-12">
+      <h1 class="text-4xl md:text-6xl font-nauryz mb-4 animate-fade-in">
+        <span class="text-accent">GLiF</span> Yours
+      </h1>
+      <p class="text-gray-300 max-w-lg mx-auto animate-slide-up">Create your personalized GLiF profile picture or ticket Glif Yours</p>
+    </header>
+    
+    <!-- Progress Steps -->
+    <div class="max-w-4xl mx-auto mb-8">
+      <div class="progress-bar-container mb-6">
+        <div class="progress-bar" :style="`width: ${(step / 3) * 100}%`"></div>
+      </div>
+      
+      <div class="flex justify-between text-sm text-gray-400">
+        <div class="flex flex-col items-center">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center mb-2"
+               :class="step >= 1 ? 'bg-accent text-white' : 'bg-gray-800 text-gray-400'">
+            <i class="fa-solid fa-upload"></i>
+          </div>
+          <span>Upload</span>
+        </div>
+        <div class="flex flex-col items-center">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center mb-2"
+               :class="step >= 2 ? 'bg-accent text-white' : 'bg-gray-800 text-gray-400'">
+            <i class="fa-solid fa-crop"></i>
+          </div>
+          <span>Crop</span>
+        </div>
+        <div class="flex flex-col items-center">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center mb-2"
+               :class="step >= 3 ? 'bg-accent text-white' : 'bg-gray-800 text-gray-400'">
+            <i class="fa-solid fa-image"></i>
+          </div>
+          <span>Preview</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="max-w-4xl mx-auto">
+      
+      <!-- Step 1: Input Form -->
+      <div x-show="step === 1" class="animate-fade-in">
+        <div class="glassmorphism rounded-xl p-6 md:p-8 mb-8">
+          <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fa-solid fa-sliders mr-3 text-accent"></i>
+            Configure Your Design
+          </h2>
+          
+          <div class="space-y-6">
+            <!-- Category Selection -->
+            <div>
+              <label class="block text-sm font-medium mb-2 text-gray-300">Select Category</label>
+              <div class="grid grid-cols-2 gap-4">
+                <button @click="selectCategory('profile')" 
+                        class="py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center"
+                        :class="category === 'profile' ? 'bg-accent text-white' : 'bg-dark-light border border-gray-700 text-gray-300 hover:bg-gray-800'">
+                  <i class="fa-solid fa-user-circle mr-2"></i>
+                  Profile Picture
+                </button>
+                
+                <button @click="selectCategory('ticket')" 
+                        class="py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center"
+                        :class="category === 'ticket' ? 'bg-accent text-white' : 'bg-dark-light border border-gray-700 text-gray-300 hover:bg-gray-800'">
+                  <i class="fa-solid fa-ticket mr-2"></i>
+                  Ticket
+                </button>
+              </div>
+            </div>
+            
+            
+            <!-- Name Input -->
+            <div>
+              <label class="block text-sm font-medium mb-2 text-gray-300">Your Name</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-accent">
+                  <i class="fa-solid fa-user"></i>
+                </div>
+                <input x-model="userName" type="text" 
+                       class="w-full bg-dark-light border border-gray-700 rounded-lg py-3 pl-10 pr-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition duration-200" 
+                       placeholder="Enter your name">
+              </div>
+            </div>
+            
+            <!-- Image Upload -->
+            <div>
+              <label class="block text-sm font-medium mb-2 text-gray-300">Upload Image</label>
+              <div class="relative bg-dark-light border border-gray-700 rounded-lg p-3 flex items-center">
+                 <input id="fileInput" type="file" @change="handleImageUpload" accept="image/*"
+                       class="custom-file-input absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                <i class="fa-solid fa-cloud-arrow-up text-accent mr-3"></i>
+                <span x-text="fileName || 'No file selected'" class="text-gray-400 text-sm truncate"></span>
+              </div>
+              <p class="mt-2 text-xs text-gray-400">Your image will be cropped to a square (1:1) format regardless of template type.</p>
+            </div>
+          </div>
+        </div>
+        
+        
+       <!-- Continue Button -->
+            <div class="pt-2">
+              <button @click="proceedToCrop()" 
+                      class="w-full bg-accent hover:bg-accent-hover text-white py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center">
+                <i class="fa-solid fa-arrow-right mr-2"></i> Continue to Crop
+              </button>
+            </div>
+
+
+        <!-- Template Selection Section -->
+        <div class="glassmorphism rounded-xl p-6 mb-8">
+          <h3 class="text-xl font-bold mb-4 flex items-center">
+            <i class="fa-solid fa-palette mr-3 text-accent"></i>
+            Choose Template Style
+          </h3>
+          
+          <!-- Profile Templates (show when profile category is selected) -->
+          <div x-show="category === 'profile'" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div @click="selectTemplate('style1')" 
+                 class="template-option rounded-lg overflow-hidden"
+                 :class="templateVariant === 'style1' ? 'selected' : ''">
+              <div class="aspect-square bg-dark flex items-center justify-center overflow-hidden">
+                <img src="../assets/images/template_profile.png" alt="Profile Style 1" class="w-full h-auto object-contain">
+              </div>
+              <p class="text-center mt-2 text-sm">Classic</p>
+            </div>
+            
+            <div @click="selectTemplate('style2')" 
+                 class="template-option rounded-lg overflow-hidden"
+                 :class="templateVariant === 'style2' ? 'selected' : ''">
+              <div class="aspect-square bg-dark flex items-center justify-center overflow-hidden">
+                <img src="../assets/images/template_profile_style2.png" alt="Profile Style 2" class="w-full h-auto object-contain">
+              </div>
+              <p class="text-center mt-2 text-sm">Neon</p>
+            </div>
+            
+            <div @click="selectTemplate('style3')" 
+                 class="template-option rounded-lg overflow-hidden"
+                 :class="templateVariant === 'style3' ? 'selected' : ''">
+              <div class="aspect-square bg-dark flex items-center justify-center overflow-hidden">
+                <img src="../assets/images/template_profile_style3.png" alt="Profile Style 3" class="w-full h-auto object-contain">
+              </div>
+              <p class="text-center mt-2 text-sm">Vintage</p>
+            </div>
+            <div class="template-option rounded-lg overflow-hidden"
+                 :class="templateVariant === 'admin' ? 'selected' : ''">
+              <div class="aspect-square bg-dark flex items-center justify-center overflow-hidden locked-template"
+                   :class="unlockedTemplates.profile.admin ? 'unlocked' : ''">
+                <img src="../assets/images/template_profile_admin.png" alt="Secret Profile" class="w-full h-auto object-contain">
+                <div class="lock-overlay" :class="unlockedTemplates.profile.admin ? 'hidden' : ''">
+                  <i class="fa-solid fa-lock text-3xl mb-2"></i>
+                  <p class="text-center text-sm mb-2">Secret Template</p>
+                  <button @click.stop="unlockadminTemplate" 
+                          class="bg-accent hover:bg-accent-hover text-white py-2 px-4 rounded text-xs">
+                    Unlock with Code
+                  </button>
+                </div>
+              </div>
+              <p class="text-center mt-2 text-sm">Secret</p>
+            </div>
+          </div>
+
+          
+          
+          <!-- Ticket Templates (show when ticket category is selected) -->
+          <div x-show="category === 'ticket'" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div @click="selectTemplate('style1')" 
+                 class="template-option rounded-lg overflow-hidden"
+                 :class="templateVariant === 'style1' ? 'selected' : ''">
+              <div class="aspect-video bg-dark flex items-center justify-center overflow-hidden">
+                <img src="../assets/images/template_ticket.png" alt="Ticket Style 1" class="w-full h-auto object-contain">
+              </div>
+              <p class="text-center mt-2 text-sm">Standard</p>
+            </div>
+            
+            <div @click="selectTemplate('style2')" 
+                 class="template-option rounded-lg overflow-hidden"
+                 :class="templateVariant === 'style2' ? 'selected' : ''">
+              <div class="aspect-video bg-dark flex items-center justify-center overflow-hidden">
+                <img src="../assets/images/template_ticket_style2.png" alt="Ticket Style 2" class="w-full h-auto object-contain">
+              </div>
+              <p class="text-center mt-2 text-sm">Premium</p>
+            </div>
+            
+            <div @click="selectTemplate('style3')" 
+                 class="template-option rounded-lg overflow-hidden"
+                 :class="templateVariant === 'style3' ? 'selected' : ''">
+              <div class="aspect-video bg-dark flex items-center justify-center overflow-hidden">
+                <img src="../assets/images/template_ticket_style3.png" alt="Ticket Style 3" class="w-full h-auto object-contain">
+              </div>
+              <p class="text-center mt-2 text-sm">VIP</p>
+            </div>
+
+            <!-- Locked secret Template -->
+            <div class="template-option rounded-lg overflow-hidden"
+                 :class="templateVariant === 'admin' ? 'selected' : ''">
+              <div class="aspect-video bg-dark flex items-center justify-center overflow-hidden locked-template"
+                   :class="unlockedTemplates.ticket.admin ? 'unlocked' : ''">
+                <img src="../assets/images/template_ticket_admin.png" alt="Secret Ticket" class="w-full h-auto object-contain">
+                <div class="lock-overlay" :class="unlockedTemplates.ticket.admin ? 'hidden' : ''">
+                  <i class="fa-solid fa-lock text-3xl mb-2"></i>
+                  <p class="text-center text-sm mb-2">Secret Template</p>
+                  <button @click.stop="unlockadminTemplate" 
+                          class="bg-accent hover:bg-accent-hover text-white py-2 px-4 rounded text-xs">
+                    Unlock with Code
+                  </button>
+                </div>
+              </div>
+              <p class="text-center mt-2 text-sm">Secret</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Step 2: Cropper -->
+      <div x-show="step === 2" class="animate-fade-in glassmorphism rounded-xl p-6">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+          <i class="fa-solid fa-crop-simple mr-3 text-accent"></i>
+          Crop Your Image (Square Format)
+        </h2>
+        
+        <div class="mb-6">
+          <div class="bg-dark rounded-lg p-4">
+            <img id="cropperImage" class="max-w-full mx-auto" />
+          </div>
+        </div>
+        
+        <div class="flex justify-between gap-4">
+          <button @click="step = 1" class="flex-1 py-3 px-6 rounded-lg border border-gray-600 hover:bg-gray-800 transition duration-200 flex items-center justify-center">
+            <i class="fa-solid fa-arrow-left mr-2"></i> Back
+          </button>
+          <button @click="cropImage()" class="flex-1 bg-accent hover:bg-accent-hover text-white py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center">
+            <i class="fa-solid fa-check mr-2"></i> Apply Crop
+          </button>
+        </div>
+      </div>
+      
+      <!-- Step 3: Preview & Export -->
+      <div x-show="step === 3" class="animate-fade-in">
+        <div class="glassmorphism rounded-xl p-6 text-center mb-8">
+          <h2 class="text-2xl font-bold mb-6 flex items-center justify-center">
+            <i class="fa-regular fa-image mr-3 text-accent"></i>
+            Your Preview
+          </h2>
+          
+          <div class="mb-8 bg-dark rounded-lg p-4 max-w-2xl mx-auto">
+            <canvas id="previewCanvas" class="max-w-full h-auto mx-auto shadow-lg"></canvas>
+          </div>
+          
+          <div class="flex flex-col md:flex-row justify-center gap-4">
+            <button @click="step = 1" class="py-3 px-6 rounded-lg border border-gray-600 hover:bg-gray-800 transition duration-200 flex items-center justify-center">
+              <i class="fa-solid fa-pencil mr-2"></i> Edit Again
+            </button>
+            <button @click="exportImage()" class="bg-accent hover:bg-accent-hover text-white py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center">
+              <i class="fa-solid fa-download mr-2"></i> Export Image
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div class="fixed bottom-5 right-5 z-50"
+         x-show="notification.show" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 transform translate-y-2"
+         x-transition:enter-end="opacity-100 transform translate-y-0"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 transform translate-y-0"
+         x-transition:leave-end="opacity-0 transform translate-y-2">
+      <div class="glassmorphism px-4 py-3 rounded-lg shadow-lg border-l-4 border-accent flex items-center">
+        <i class="fa-solid fa-circle-check text-accent mr-3"></i>
+        <span x-text="notification.message"></span>
+        <button @click="notification.show = false" class="ml-4 text-gray-400 hover:text-white">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+    </div>
+    
+  </div>
+
+  <footer class="text-center text-gray-400 py-6 mt-12">
+    <p>© 2024 GLIF Yours. All rights reserved.</p>
+  </footer>
 </body>
 </html>

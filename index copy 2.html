@@ -119,110 +119,22 @@
       margin-left: 12px;
       font-size: 14px;
     }
-    
-    .template-option {
-      position: relative;
-      transition: transform 0.2s ease-in-out;
-      cursor: pointer;
-    }
-    
-    .template-option:hover {
-      transform: translateY(-5px);
-    }
-    
-    .template-option.selected {
-      box-shadow: 0 0 0 3px #F83E01;
-    }
-    
-    .template-option.selected::after {
-      content: '✓';
-      position: absolute;
-      top: -10px;
-      right: -10px;
-      width: 24px;
-      height: 24px;
-      background-color: #F83E01;
-      color: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-    }
-        
-
-    .locked-template {
-      position: relative;
-      overflow: hidden;
-    }
-
-    .locked-template img {
-      filter: blur(8px);
-      transition: filter 0.5s ease;
-    }
-
-    .locked-template.unlocked img {
-      filter: blur(0);
-    }
-
-    .lock-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      color: white;
-      transition: opacity 0.5s ease;
-    }
-
-    .lock-overlay.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-
   </style>
 </head>
 <body class="min-h-screen text-white font-space">
   <div x-data="{
     step: 1,
-    category: 'profile', 
-    templateVariant: 'style1',
+    template: 'profile',
     userName: '',
     fileName: '',
-    validCodes: ['CODE1', 'CODE2', 'CODE3', 'CODE4', 'CODE5', 'PREMIUM'],
+    validCodes: ['CODE1', 'CODE2', 'CODE3', 'CODE4', 'CODE5'],
     cropper: null,
     croppedImageDataURL: null,
     templates: {
-      profile: {
-        style1: '../assets/images/template_profile.png',
-        style2: '../assets/images/template_profile_style2.png',
-        style3: '../assets/images/template_profile_style3.png',
-        premium: '../assets/images/template_profile_premium.png'
-      },
-      ticket: {
-        style1: '../assets/images/template_ticket.png',
-        style2: '../assets/images/template_ticket_style2.png',
-        style3: '../assets/images/template_ticket_style3.png',
-        premium: '../assets/images/template_ticket_premium.png'
-      }
-    },
-
-    unlockedTemplates: {
-      profile: {
-        premium: false
-      },
-      ticket: {
-        premium: false
-      }
-      
+      profile: '../assets/images/template_profile.png',
+      ticket: '../assets/images/template_ticket.png'
     },
     notification: { show: false, message: '' },
-       readyToCrop: false,
     
     showNotification(message) {
       this.notification.message = message;
@@ -235,54 +147,8 @@
       if (!file) return;
       
       this.fileName = file.name;
-      
-      this.readyToCrop = true;
-
-      this.showNotification('Image uploaded! Ready to crop.');
-
-    },
-
-    
-
-    proceedToCrop() {
-
-      if (!this.readyToCrop) {
-
-        this.showNotification('Please upload an image first!');
-
-        return;
-
-      }
-
-      
-
-      if (!this.userName) {
-
-        this.showNotification('Please enter your name before continuing!');
-
-        return;
-
-      }
-
-      
-
-      // Check if user selected a premium template but hasn't unlocked it
-
-      if ((this.templateVariant === 'premium') && 
-
-          !this.unlockedTemplates[this.category].premium) {
-
-        this.showNotification('Please unlock the premium template first!');
-
-        return;
-
-      }
-
-
       const image = document.getElementById('cropperImage');
-          const fileInput = document.getElementById('fileInput');
-
-      image.src = URL.createObjectURL(fileInput.files[0]);
+      image.src = URL.createObjectURL(file);
       
       image.onload = () => {
         if (this.cropper) {
@@ -290,7 +156,7 @@
         }
         
         this.cropper = new Cropper(image, {
-          aspectRatio: 1, // Always use 1:1 aspect ratio as requested
+          aspectRatio: this.template === 'profile' ? 1 : 16/9,
           viewMode: 1,
           guides: true,
           autoCropArea: 0.8,
@@ -332,7 +198,7 @@
       const ctx = canvas.getContext('2d');
       
       const templateImg = new Image();
-      templateImg.src = this.templates[this.category][this.templateVariant];
+      templateImg.src = this.templates[this.template];
       await new Promise(resolve => templateImg.onload = resolve);
       
       canvas.width = templateImg.width;
@@ -348,48 +214,30 @@
       
       ctx.fillStyle = '#FFFFFF';
       ctx.font = '40px NAURYZREDKEDS';
-      
-      // Adjust text position based on template type
-      if (this.category === 'profile') {
-        ctx.fillText(this.userName, 50, canvas.height - 50);
-      } else if (this.category === 'ticket') {
-        // Position may vary based on ticket template style
-        ctx.fillText(this.userName, 700, 600);
-      }
+      ctx.fillText(this.userName, 50, canvas.height - 50);
       
       this.showNotification('Preview generated successfully!');
     },
     
     async scaleAndDrawImage(ctx, img, targetWidth, targetHeight) {
-      if (this.category === 'profile') {
+      if (this.template === 'profile') {
         const scaledWidth = targetWidth * 0.93;
         const scaledHeight = targetHeight * 0.93;
         const x = (targetWidth - scaledWidth) / 2;
         const y = (targetHeight - scaledHeight) / 2;
         ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
-      } else if (this.category === 'ticket') {
-        // Draw user image at circle on left for ticket template
+      } else if (this.template === 'ticket') {
+        // Draw user image at circle on left (estimate circle center)
         ctx.save();
-        
-        // Positions may need adjustment based on the specific ticket template style
-        let cx, cy, radius;
-        
-         if (this.templateVariant === 'style1') {
-          cx = 340; cy = 540; radius = 217;
-        } else if (this.templateVariant === 'style2') {
-          cx = 340; cy = 540; radius = 217;  // Adjust these values for style2
-        } else if (this.templateVariant === 'style3') {
-          cx = 340; cy = 540; radius = 217;  // Adjust these values for style3
-        } else if (this.templateVariant === 'premium') {
-          cx = 340; cy = 540; radius = 217;  // Adjust these values for premium
-
-        }
-        
+        const cx = 340, cy = 540, radius = 217;
         ctx.beginPath();
         ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
         ctx.clip();
         ctx.drawImage(img, cx - radius, cy - radius, radius * 2, radius * 2);
         ctx.restore();
+        ctx.font = '120px NAURYZ';
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(this.userName, 700, 600);
       }
     },
     
@@ -402,34 +250,18 @@
       
       const canvas = document.getElementById('previewCanvas');
       const link = document.createElement('a');
-      link.download = `glif_${this.category}_${this.templateVariant}.png`;
+      link.download = 'generated_image.png';
       link.href = canvas.toDataURL('image/png');
       link.click();
       
       this.showNotification('Image downloaded successfully!');
     },
     
-    selectCategory(cat) {
-      this.category = cat;
-    },
-    
-    selectTemplate(variant) {
-      this.templateVariant = variant;
-        },
-
-    
-
-    unlockPremiumTemplate() {
-      const code = prompt('Enter unlock code for premium template:');
-      if (code === 'PREMIUM') {
-        this.unlockedTemplates[this.category].premium = true;
-        this.templateVariant = 'premium';
-        this.showNotification('Premium template unlocked!');
-      } else {
-        this.showNotification('Invalid unlock code!');
+    updateTemplateAspectRatio() {
+      if (this.cropper) {
+        this.cropper.setAspectRatio(this.template === 'profile' ? 1 : 16/9);
       }
     }
-
   }" class="container mx-auto py-12 px-4 md:px-6">
   
     <!-- Header -->
@@ -483,26 +315,20 @@
           </h2>
           
           <div class="space-y-6">
-            <!-- Category Selection -->
+            <!-- Template Selection -->
             <div>
-              <label class="block text-sm font-medium mb-2 text-gray-300">Select Category</label>
-              <div class="grid grid-cols-2 gap-4">
-                <button @click="selectCategory('profile')" 
-                        class="py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center"
-                        :class="category === 'profile' ? 'bg-accent text-white' : 'bg-dark-light border border-gray-700 text-gray-300 hover:bg-gray-800'">
-                  <i class="fa-solid fa-user-circle mr-2"></i>
-                  Profile Picture
-                </button>
-                
-                <button @click="selectCategory('ticket')" 
-                        class="py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center"
-                        :class="category === 'ticket' ? 'bg-accent text-white' : 'bg-dark-light border border-gray-700 text-gray-300 hover:bg-gray-800'">
-                  <i class="fa-solid fa-ticket mr-2"></i>
-                  Ticket
-                </button>
+              <label class="block text-sm font-medium mb-2 text-gray-300">Select Template</label>
+              <div class="relative">
+                <select x-model="template" @change="updateTemplateAspectRatio()" 
+                        class="w-full bg-dark-light border border-gray-700 rounded-lg py-3 px-4 pr-8 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition duration-200">
+                  <option value="profile">Profile Picture (1:1)</option>
+                  <option value="ticket">Ticket (16:9)</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-accent">
+                  <i class="fa-solid fa-chevron-down"></i>
+                </div>
               </div>
             </div>
-            
             
             <!-- Name Input -->
             <div>
@@ -521,126 +347,32 @@
             <div>
               <label class="block text-sm font-medium mb-2 text-gray-300">Upload Image</label>
               <div class="relative bg-dark-light border border-gray-700 rounded-lg p-3 flex items-center">
-                 <input id="fileInput" type="file" @change="handleImageUpload" accept="image/*"
+                <input type="file" @change="handleImageUpload" accept="image/*"
                        class="custom-file-input absolute inset-0 w-full h-full opacity-0 cursor-pointer">
                 <i class="fa-solid fa-cloud-arrow-up text-accent mr-3"></i>
                 <span x-text="fileName || 'No file selected'" class="text-gray-400 text-sm truncate"></span>
               </div>
-              <p class="mt-2 text-xs text-gray-400">Your image will be cropped to a square (1:1) format regardless of template type.</p>
             </div>
           </div>
         </div>
         
-        
-       <!-- Continue Button -->
-            <div class="pt-2">
-              <button @click="proceedToCrop()" 
-                      class="w-full bg-accent hover:bg-accent-hover text-white py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center">
-                <i class="fa-solid fa-arrow-right mr-2"></i> Continue to Crop
-              </button>
-            </div>
-
-
-        <!-- Template Selection Section -->
-        <div class="glassmorphism rounded-xl p-6 mb-8">
-          <h3 class="text-xl font-bold mb-4 flex items-center">
-            <i class="fa-solid fa-palette mr-3 text-accent"></i>
-            Choose Template Style
-          </h3>
-          
-          <!-- Profile Templates (show when profile category is selected) -->
-          <div x-show="category === 'profile'" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div @click="selectTemplate('style1')" 
-                 class="template-option rounded-lg overflow-hidden"
-                 :class="templateVariant === 'style1' ? 'selected' : ''">
-              <div class="aspect-square bg-dark flex items-center justify-center overflow-hidden">
-                <img src="../assets/images/template_profile.png" alt="Profile Style 1" class="w-full h-auto object-contain">
-              </div>
-              <p class="text-center mt-2 text-sm">Classic</p>
-            </div>
-            
-            <div @click="selectTemplate('style2')" 
-                 class="template-option rounded-lg overflow-hidden"
-                 :class="templateVariant === 'style2' ? 'selected' : ''">
-              <div class="aspect-square bg-dark flex items-center justify-center overflow-hidden">
-                <img src="../assets/images/template_profile_style2.png" alt="Profile Style 2" class="w-full h-auto object-contain">
-              </div>
-              <p class="text-center mt-2 text-sm">Neon</p>
-            </div>
-            
-            <div @click="selectTemplate('style3')" 
-                 class="template-option rounded-lg overflow-hidden"
-                 :class="templateVariant === 'style3' ? 'selected' : ''">
-              <div class="aspect-square bg-dark flex items-center justify-center overflow-hidden">
-                <img src="../assets/images/template_profile_style3.png" alt="Profile Style 3" class="w-full h-auto object-contain">
-              </div>
-              <p class="text-center mt-2 text-sm">Vintage</p>
-            </div>
-            <div class="template-option rounded-lg overflow-hidden"
-                 :class="templateVariant === 'premium' ? 'selected' : ''">
-              <div class="aspect-square bg-dark flex items-center justify-center overflow-hidden locked-template"
-                   :class="unlockedTemplates.profile.premium ? 'unlocked' : ''">
-                <img src="../assets/images/template_profile_premium.png" alt="Premium Profile" class="w-full h-auto object-contain">
-                <div class="lock-overlay" :class="unlockedTemplates.profile.premium ? 'hidden' : ''">
-                  <i class="fa-solid fa-lock text-3xl mb-2"></i>
-                  <p class="text-center text-sm mb-2">Premium Template</p>
-                  <button @click.stop="unlockPremiumTemplate" 
-                          class="bg-accent hover:bg-accent-hover text-white py-2 px-4 rounded text-xs">
-                    Unlock with Code
-                  </button>
-                </div>
-              </div>
-              <p class="text-center mt-2 text-sm">Premium</p>
+        <!-- Template Preview Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="glassmorphism rounded-xl p-4 overflow-hidden hover:border-accent transition-all duration-300 cursor-pointer"
+               :class="template === 'profile' ? 'border-2 border-accent' : 'border border-transparent'"
+               @click="template = 'profile'">
+            <h3 class="text-center mb-3">Profile Template</h3>
+            <div class="aspect-square bg-dark rounded-lg flex items-center justify-center overflow-hidden">
+              <img src="../assets/images/template_profile.png" alt="Profile Template" class="w-full h-auto object-contain">
             </div>
           </div>
-
           
-          
-          <!-- Ticket Templates (show when ticket category is selected) -->
-          <div x-show="category === 'ticket'" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div @click="selectTemplate('style1')" 
-                 class="template-option rounded-lg overflow-hidden"
-                 :class="templateVariant === 'style1' ? 'selected' : ''">
-              <div class="aspect-video bg-dark flex items-center justify-center overflow-hidden">
-                <img src="../assets/images/template_ticket.png" alt="Ticket Style 1" class="w-full h-auto object-contain">
-              </div>
-              <p class="text-center mt-2 text-sm">Standard</p>
-            </div>
-            
-            <div @click="selectTemplate('style2')" 
-                 class="template-option rounded-lg overflow-hidden"
-                 :class="templateVariant === 'style2' ? 'selected' : ''">
-              <div class="aspect-video bg-dark flex items-center justify-center overflow-hidden">
-                <img src="../assets/images/template_ticket_style2.png" alt="Ticket Style 2" class="w-full h-auto object-contain">
-              </div>
-              <p class="text-center mt-2 text-sm">Premium</p>
-            </div>
-            
-            <div @click="selectTemplate('style3')" 
-                 class="template-option rounded-lg overflow-hidden"
-                 :class="templateVariant === 'style3' ? 'selected' : ''">
-              <div class="aspect-video bg-dark flex items-center justify-center overflow-hidden">
-                <img src="../assets/images/template_ticket_style3.png" alt="Ticket Style 3" class="w-full h-auto object-contain">
-              </div>
-              <p class="text-center mt-2 text-sm">VIP</p>
-            </div>
-
-            <!-- Locked Premium Template -->
-            <div class="template-option rounded-lg overflow-hidden"
-                 :class="templateVariant === 'premium' ? 'selected' : ''">
-              <div class="aspect-video bg-dark flex items-center justify-center overflow-hidden locked-template"
-                   :class="unlockedTemplates.ticket.premium ? 'unlocked' : ''">
-                <img src="../assets/images/template_ticket_premium.png" alt="Premium Ticket" class="w-full h-auto object-contain">
-                <div class="lock-overlay" :class="unlockedTemplates.ticket.premium ? 'hidden' : ''">
-                  <i class="fa-solid fa-lock text-3xl mb-2"></i>
-                  <p class="text-center text-sm mb-2">Premium Template</p>
-                  <button @click.stop="unlockPremiumTemplate" 
-                          class="bg-accent hover:bg-accent-hover text-white py-2 px-4 rounded text-xs">
-                    Unlock with Code
-                  </button>
-                </div>
-              </div>
-              <p class="text-center mt-2 text-sm">Premium</p>
+          <div class="glassmorphism rounded-xl p-4 overflow-hidden hover:border-accent transition-all duration-300 cursor-pointer"
+               :class="template === 'ticket' ? 'border-2 border-accent' : 'border border-transparent'"
+               @click="template = 'ticket'">
+            <h3 class="text-center mb-3">Ticket Template</h3>
+            <div class="aspect-video bg-dark rounded-lg flex items-center justify-center overflow-hidden">
+              <img src="../assets/images/template_ticket.png" alt="Ticket Template" class="w-full h-auto object-contain">
             </div>
           </div>
         </div>
@@ -650,7 +382,7 @@
       <div x-show="step === 2" class="animate-fade-in glassmorphism rounded-xl p-6">
         <h2 class="text-2xl font-bold mb-6 flex items-center">
           <i class="fa-solid fa-crop-simple mr-3 text-accent"></i>
-          Crop Your Image (Square Format)
+          Crop Your Image
         </h2>
         
         <div class="mb-6">
@@ -690,8 +422,29 @@
             </button>
           </div>
         </div>
+        
+        <!-- Share Section
+        <div class="glassmorphism rounded-xl p-6 text-center">
+          <h3 class="text-xl font-bold mb-4">Share Your Design</h3>
+          <p class="text-gray-300 mb-4">Loved your creation? Share it with your friends:</p>
+          
+          <div class="flex justify-center gap-3">
+            <button class="w-12 h-12 bg-[#1877F2] hover:bg-[#0e5fc7] rounded-full flex items-center justify-center transition duration-200">
+              <i class="fa-brands fa-facebook-f"></i>
+            </button>
+            <button class="w-12 h-12 bg-[#1DA1F2] hover:bg-[#0c85d0] rounded-full flex items-center justify-center transition duration-200">
+              <i class="fa-brands fa-twitter"></i>
+            </button>
+            <button class="w-12 h-12 bg-[#E4405F] hover:bg-[#d12e4c] rounded-full flex items-center justify-center transition duration-200">
+              <i class="fa-brands fa-instagram"></i>
+            </button>
+            <button class="w-12 h-12 bg-[#25D366] hover:bg-[#1eae54] rounded-full flex items-center justify-center transition duration-200">
+              <i class="fa-brands fa-whatsapp"></i>
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
+    </div> -->
     
     <!-- Toast Notification -->
     <div class="fixed bottom-5 right-5 z-50"

@@ -149,22 +149,21 @@
       justify-content: center;
       font-weight: bold;
     }
-        
-
+    
     .locked-template {
       position: relative;
       overflow: hidden;
     }
-
+    
     .locked-template img {
       filter: blur(8px);
       transition: filter 0.5s ease;
     }
-
+    
     .locked-template.unlocked img {
       filter: blur(0);
     }
-
+    
     .lock-overlay {
       position: absolute;
       top: 0;
@@ -179,12 +178,11 @@
       color: white;
       transition: opacity 0.5s ease;
     }
-
+    
     .lock-overlay.hidden {
       opacity: 0;
       pointer-events: none;
     }
-
   </style>
 </head>
 <body class="min-h-screen text-white font-space">
@@ -211,7 +209,6 @@
         premium: '../assets/images/template_ticket_premium.png'
       }
     },
-
     unlockedTemplates: {
       profile: {
         premium: false
@@ -219,10 +216,9 @@
       ticket: {
         premium: false
       }
-      
     },
     notification: { show: false, message: '' },
-       readyToCrop: false,
+    readyToCrop: false,
     
     showNotification(message) {
       this.notification.message = message;
@@ -235,53 +231,30 @@
       if (!file) return;
       
       this.fileName = file.name;
-      
       this.readyToCrop = true;
-
-      this.showNotification('Image uploaded! Ready to crop.');
-
+      this.showNotification('Image uploaded! Click "Continue to Crop" when ready.');
     },
-
     
-
     proceedToCrop() {
-
       if (!this.readyToCrop) {
-
         this.showNotification('Please upload an image first!');
-
         return;
-
       }
-
       
-
       if (!this.userName) {
-
         this.showNotification('Please enter your name before continuing!');
-
         return;
-
       }
-
       
-
       // Check if user selected a premium template but hasn't unlocked it
-
       if ((this.templateVariant === 'premium') && 
-
           !this.unlockedTemplates[this.category].premium) {
-
         this.showNotification('Please unlock the premium template first!');
-
         return;
-
       }
-
-
+      
       const image = document.getElementById('cropperImage');
-          const fileInput = document.getElementById('fileInput');
-
+      const fileInput = document.getElementById('fileInput');
       image.src = URL.createObjectURL(fileInput.files[0]);
       
       image.onload = () => {
@@ -374,7 +347,7 @@
         // Positions may need adjustment based on the specific ticket template style
         let cx, cy, radius;
         
-         if (this.templateVariant === 'style1') {
+        if (this.templateVariant === 'style1') {
           cx = 340; cy = 540; radius = 217;
         } else if (this.templateVariant === 'style2') {
           cx = 340; cy = 540; radius = 217;  // Adjust these values for style2
@@ -382,7 +355,6 @@
           cx = 340; cy = 540; radius = 217;  // Adjust these values for style3
         } else if (this.templateVariant === 'premium') {
           cx = 340; cy = 540; radius = 217;  // Adjust these values for premium
-
         }
         
         ctx.beginPath();
@@ -415,10 +387,8 @@
     
     selectTemplate(variant) {
       this.templateVariant = variant;
-        },
-
+    },
     
-
     unlockPremiumTemplate() {
       const code = prompt('Enter unlock code for premium template:');
       if (code === 'PREMIUM') {
@@ -429,7 +399,6 @@
         this.showNotification('Invalid unlock code!');
       }
     }
-
   }" class="container mx-auto py-12 px-4 md:px-6">
   
     <!-- Header -->
@@ -503,7 +472,6 @@
               </div>
             </div>
             
-            
             <!-- Name Input -->
             <div>
               <label class="block text-sm font-medium mb-2 text-gray-300">Your Name</label>
@@ -521,26 +489,24 @@
             <div>
               <label class="block text-sm font-medium mb-2 text-gray-300">Upload Image</label>
               <div class="relative bg-dark-light border border-gray-700 rounded-lg p-3 flex items-center">
-                 <input id="fileInput" type="file" @change="handleImageUpload" accept="image/*"
+                <input id="fileInput" type="file" @change="handleImageUpload" accept="image/*"
                        class="custom-file-input absolute inset-0 w-full h-full opacity-0 cursor-pointer">
                 <i class="fa-solid fa-cloud-arrow-up text-accent mr-3"></i>
                 <span x-text="fileName || 'No file selected'" class="text-gray-400 text-sm truncate"></span>
               </div>
               <p class="mt-2 text-xs text-gray-400">Your image will be cropped to a square (1:1) format regardless of template type.</p>
             </div>
-          </div>
-        </div>
-        
-        
-       <!-- Continue Button -->
+            
+            <!-- Continue Button -->
             <div class="pt-2">
               <button @click="proceedToCrop()" 
                       class="w-full bg-accent hover:bg-accent-hover text-white py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center">
                 <i class="fa-solid fa-arrow-right mr-2"></i> Continue to Crop
               </button>
             </div>
-
-
+          </div>
+        </div>
+        
         <!-- Template Selection Section -->
         <div class="glassmorphism rounded-xl p-6 mb-8">
           <h3 class="text-xl font-bold mb-4 flex items-center">
@@ -549,7 +515,7 @@
           </h3>
           
           <!-- Profile Templates (show when profile category is selected) -->
-          <div x-show="category === 'profile'" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div x-show="category === 'profile'" class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div @click="selectTemplate('style1')" 
                  class="template-option rounded-lg overflow-hidden"
                  :class="templateVariant === 'style1' ? 'selected' : ''">
@@ -576,6 +542,8 @@
               </div>
               <p class="text-center mt-2 text-sm">Vintage</p>
             </div>
+            
+            <!-- Locked Premium Template -->
             <div class="template-option rounded-lg overflow-hidden"
                  :class="templateVariant === 'premium' ? 'selected' : ''">
               <div class="aspect-square bg-dark flex items-center justify-center overflow-hidden locked-template"
@@ -593,11 +561,9 @@
               <p class="text-center mt-2 text-sm">Premium</p>
             </div>
           </div>
-
-          
           
           <!-- Ticket Templates (show when ticket category is selected) -->
-          <div x-show="category === 'ticket'" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div x-show="category === 'ticket'" class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div @click="selectTemplate('style1')" 
                  class="template-option rounded-lg overflow-hidden"
                  :class="templateVariant === 'style1' ? 'selected' : ''">
@@ -624,7 +590,7 @@
               </div>
               <p class="text-center mt-2 text-sm">VIP</p>
             </div>
-
+            
             <!-- Locked Premium Template -->
             <div class="template-option rounded-lg overflow-hidden"
                  :class="templateVariant === 'premium' ? 'selected' : ''">
