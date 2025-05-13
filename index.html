@@ -46,10 +46,26 @@
         }
       }
     }
+    window.addEventListener('load', () => {
+    const overlay = document.getElementById('intro-overlay');
+    setTimeout(() => {
+      overlay.style.display = 'none'; // Hapus elemen setelah animasi selesai
+    }, 3000); // Cocokkan dengan durasi animasi (2s delay + 1s animasi)
+  });
   </script>
   
 </head>
 <body class="min-h-screen text-white font-space">
+<div id="intro-overlay">
+  <div class="video-wrapper">
+    <video autoplay muted loop>
+      <source src="assets\videos\intro_video.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+</div>
+
+
   <div x-data="{
     step: 1,
     category: 'profile', 
@@ -302,13 +318,7 @@
       <p class="text-gray-300 max-w-lg mx-auto animate-slide-up">Create your personalized GLiF profile picture or ticket Glif Yours</p>
     </header>
     
-    <div class="loading_container">
-        <div class="loading_overlay" id="loading_overlay">
-            <div class="loading_checkmark">
-              <img src="assets\images\g_accent.png">
-            </div>
-        </div>
-    </div>
+    
 
     <!-- Progress Steps -->
     <div class="max-w-4xl mx-auto mb-8">
@@ -580,8 +590,7 @@
         </button>
       </div>
     </div>
-    
-  </div>
+  
 
   <footer class="text-center text-gray-400 py-6 mt-12">
     <p>© 2024 GLIF Yours. All rights reserved.</p>
