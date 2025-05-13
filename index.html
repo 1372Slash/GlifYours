@@ -72,7 +72,7 @@
     templateVariant: 'style1',
     userName: '',
     fileName: '',
-    validCodes: ['CODE1', 'CODE2', 'CODE3', 'CODE4', 'CODE5', 'ADMINTERSAYANG'],
+    validCodes: ['CODE1', 'CODE2', 'CODE3', 'CODE4', 'CODE5', 'GEN0'],
     cropper: null,
     croppedImageDataURL: null,
     templates: {
@@ -80,22 +80,22 @@
         style1: '../assets/images/template_profile.png',
         style2: '../assets/images/template_profile_style2.png',
         style3: '../assets/images/template_profile_style3.png',
-        admin: '../assets/images/template_profile_admin.png'
+        gen0: '../assets/images/template_profile_gen0.png'
       },
       ticket: {
         style1: '../assets/images/template_ticket.png',
         style2: '../assets/images/template_ticket_style2.png',
         style3: '../assets/images/template_ticket_style3.png',
-        admin: '../assets/images/template_ticket_admin.png'
+        gen0: '../assets/images/template_ticket_gen0.png'
       }
     },
 
     unlockedTemplates: {
       profile: {
-        admin: false
+        gen0: false
       },
       ticket: {
-        admin: false
+        gen0: false
       }
       
     },
@@ -144,13 +144,13 @@
 
       
 
-      // Check if user selected a admin template but hasn't unlocked it
+      // Check if user selected a gen0 template but hasn't unlocked it
 
-      if ((this.templateVariant === 'admin') && 
+      if ((this.templateVariant === 'gen0') && 
 
-          !this.unlockedTemplates[this.category].admin) {
+          !this.unlockedTemplates[this.category].gen0) {
 
-        this.showNotification('Please unlock the admin template first!');
+        this.showNotification('Please unlock the gen0 template first!');
 
         return;
 
@@ -256,7 +256,7 @@
       cx = 338; cy = 540; radius = 217; // Moved left from 340 to 300
       } else if (this.templateVariant === 'style3') {
       cx = 338; cy = 540; radius = 217; // Moved left from 340 to 300
-      } else if (this.templateVariant === 'admin') {
+      } else if (this.templateVariant === 'gen0') {
       cx = 338; cy = 540; radius = 217; // Moved left from 340 to 300
       }
       
@@ -294,12 +294,12 @@
 
     
 
-    unlockadminTemplate() {
+    unlockGEN0Template() {
       const code = prompt('Enter unlock code for secret template:');
-      if (code === 'ADMINTERSAYANG') {
-        this.unlockedTemplates[this.category].admin = true;
-        this.templateVariant = 'admin';
-        this.showNotification('Admin template unlocked!');
+      if (code === 'GEN0') {
+        this.unlockedTemplates[this.category].gen0 = true;
+        this.templateVariant = 'gen0';
+        this.showNotification('Gen 0 template unlocked!');
       } else {
         this.showNotification('Invalid unlock code!');
       }
@@ -454,14 +454,14 @@
               <p class="text-center mt-2 text-sm">Vintage</p>
             </div>
             <div class="template-option rounded-lg overflow-hidden"
-                 :class="templateVariant === 'admin' ? 'selected' : ''">
+                 :class="templateVariant === 'gen0' ? 'selected' : ''">
               <div class="aspect-square bg-dark flex items-center justify-center overflow-hidden locked-template"
-                   :class="unlockedTemplates.profile.admin ? 'unlocked' : ''">
-                <img src="../assets/images/template_profile_admin.png" alt="Secret Profile" class="w-full h-auto object-contain">
-                <div class="lock-overlay" :class="unlockedTemplates.profile.admin ? 'hidden' : ''">
+                   :class="unlockedTemplates.profile.gen0 ? 'unlocked' : ''">
+                <img src="../assets/images/template_profile_gen0.png" alt="Secret Profile" class="w-full h-auto object-contain">
+                <div class="lock-overlay" :class="unlockedTemplates.profile.gen0 ? 'hidden' : ''">
                   <i class="fa-solid fa-lock text-3xl mb-2"></i>
                   <p class="text-center text-sm mb-2">Secret Template</p>
-                  <button @click.stop="unlockadminTemplate" 
+                  <button @click.stop="unlockGEN0Template" 
                           class="bg-accent hover:bg-accent-hover text-white py-2 px-4 rounded text-xs">
                     Unlock with Code
                   </button>
@@ -504,14 +504,14 @@
 
             <!-- Locked secret Template -->
             <div class="template-option rounded-lg overflow-hidden"
-                 :class="templateVariant === 'admin' ? 'selected' : ''">
+                 :class="templateVariant === 'gen0' ? 'selected' : ''">
               <div class="aspect-video bg-dark flex items-center justify-center overflow-hidden locked-template"
-                   :class="unlockedTemplates.ticket.admin ? 'unlocked' : ''">
-                <img src="../assets/images/template_ticket_admin.png" alt="Secret Ticket" class="w-full h-auto object-contain">
-                <div class="lock-overlay" :class="unlockedTemplates.ticket.admin ? 'hidden' : ''">
+                   :class="unlockedTemplates.ticket.gen0 ? 'unlocked' : ''">
+                <img src="../assets/images/template_ticket_gen0.png" alt="Secret Ticket" class="w-full h-auto object-contain">
+                <div class="lock-overlay" :class="unlockedTemplates.ticket.gen0 ? 'hidden' : ''">
                   <i class="fa-solid fa-lock text-3xl mb-2"></i>
                   <p class="text-center text-sm mb-2">Secret Template</p>
-                  <button @click.stop="unlockadminTemplate" 
+                  <button @click.stop="unlockGEN0Template" 
                           class="bg-accent hover:bg-accent-hover text-white py-2 px-4 rounded text-xs">
                     Unlock with Code
                   </button>
