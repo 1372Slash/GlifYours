@@ -200,8 +200,8 @@
     
     async generatePreview() {
       if (!this.userName || !this.croppedImageDataURL) {
-        this.showNotification('Please enter your name and crop your image');
-        return;
+      this.showNotification('Please enter your name and crop your image');
+      return;
       }
       
       await this.loadCustomFont();
@@ -225,14 +225,15 @@
       ctx.drawImage(templateImg, 0, 0);
       
       ctx.fillStyle = '#FFFFFF';
-      ctx.font = '40px NAURYZREDKEDS';
       
-      // Adjust text position based on template type
+      // Different font sizes and positions for profile vs ticket
       if (this.category === 'profile') {
-        ctx.fillText(this.userName, 50, canvas.height - 50);
+      ctx.font = '40px NAURYZREDKEDS';
+      ctx.fillText(this.userName, 50, canvas.height - 50);
       } else if (this.category === 'ticket') {
-        // Position may vary based on ticket template style
-        ctx.fillText(this.userName, 700, 600);
+      ctx.font = '120px NAURYZREDKEDS'; // Bigger font for tickets
+      ctx.textAlign = 'left';
+      ctx.fillText(this.userName, canvas.width/2 - 150, canvas.height/2 + 50);
       }
       
       this.showNotification('Preview generated successfully!');
@@ -240,34 +241,30 @@
     
     async scaleAndDrawImage(ctx, img, targetWidth, targetHeight) {
       if (this.category === 'profile') {
-        const scaledWidth = targetWidth * 0.93;
-        const scaledHeight = targetHeight * 0.93;
-        const x = (targetWidth - scaledWidth) / 2;
-        const y = (targetHeight - scaledHeight) / 2;
-        ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
+      const scaledWidth = targetWidth * 0.93;
+      const scaledHeight = targetHeight * 0.93;
+      const x = (targetWidth - scaledWidth) / 2;
+      const y = (targetHeight - scaledHeight) / 2;
+      ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
       } else if (this.category === 'ticket') {
-        // Draw user image at circle on left for ticket template
-        ctx.save();
-        
-        // Positions may need adjustment based on the specific ticket template style
-        let cx, cy, radius;
-        
-         if (this.templateVariant === 'style1') {
-          cx = 340; cy = 540; radius = 217;
-        } else if (this.templateVariant === 'style2') {
-          cx = 340; cy = 540; radius = 217;  // Adjust these values for style2
-        } else if (this.templateVariant === 'style3') {
-          cx = 340; cy = 540; radius = 217;  // Adjust these values for style3
-        } else if (this.templateVariant === 'admin') {
-          cx = 340; cy = 540; radius = 217;  // Adjust these values for admin
-
-        }
-        
-        ctx.beginPath();
-        ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
-        ctx.clip();
-        ctx.drawImage(img, cx - radius, cy - radius, radius * 2, radius * 2);
-        ctx.restore();
+      ctx.save();
+      
+      let cx, cy, radius;
+      if (this.templateVariant === 'style1') {
+      cx = 338; cy = 540; radius = 217; // Moved left from 340 to 300
+      } else if (this.templateVariant === 'style2') {
+      cx = 338; cy = 540; radius = 217; // Moved left from 340 to 300
+      } else if (this.templateVariant === 'style3') {
+      cx = 338; cy = 540; radius = 217; // Moved left from 340 to 300
+      } else if (this.templateVariant === 'admin') {
+      cx = 338; cy = 540; radius = 217; // Moved left from 340 to 300
+      }
+      
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+      ctx.clip();
+      ctx.drawImage(img, cx - radius, cy - radius, radius * 2, radius * 2);
+      ctx.restore();
       }
     },
     
@@ -386,14 +383,14 @@
             
             <!-- Name Input -->
             <div>
-              <label class="block text-sm font-medium mb-2 text-gray-300">Your Name</label>
+              <label class="block text-sm font-medium mb-2 text-gray-300">Your account</label>
               <div class="relative">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-accent">
-                  <i class="fa-solid fa-user"></i>
+                  <i class="fa-solid fa-user ml-1 mr-3"></i>
                 </div>
                 <input x-model="userName" type="text" 
                        class="w-full bg-dark-light border border-gray-700 rounded-lg py-3 pl-10 pr-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition duration-200" 
-                       placeholder="Enter your name">
+                       placeholder="Enter your account name">
               </div>
             </div>
             
@@ -403,8 +400,8 @@
               <div class="relative bg-dark-light border border-gray-700 rounded-lg p-3 flex items-center">
                  <input id="fileInput" type="file" @change="handleImageUpload" accept="image/*"
                        class="custom-file-input absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                <i class="fa-solid fa-cloud-arrow-up text-accent mr-3"></i>
-                <span x-text="fileName || 'No file selected'" class="text-gray-400 text-sm truncate"></span>
+                <i class="fa-solid fa-cloud-arrow-up text-accent mr-2"></i>
+                <span x-text="fileName || 'No file selected'" class="text-gray-400 truncate"></span>
               </div>
               <p class="mt-2 text-xs text-gray-400">Your image will be cropped to a square (1:1) format regardless of template type.</p>
             </div>
@@ -413,7 +410,7 @@
         
         
        <!-- Continue Button -->
-            <div class="pt-2">
+            <div class="pt-2 pb-10">
               <button @click="proceedToCrop()" 
                       class="w-full bg-accent hover:bg-accent-hover text-white py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center">
                 <i class="fa-solid fa-arrow-right mr-2"></i> Continue to Crop
@@ -593,7 +590,13 @@
   
 
   <footer class="text-center text-gray-400 py-6 mt-12">
-    <p>© 2024 GLIF Yours. All rights reserved.</p>
+    <div>
+    &copy;
+    <span id="copyright">
+        <script>document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))</script>
+    </span>
+    Glif - GlideFrame
+</div>
   </footer>
 </body>
 </html>
