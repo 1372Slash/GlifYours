@@ -57,11 +57,13 @@
 </head>
 <body class="min-h-screen text-white font-space">
 <div id="intro-overlay">
-  <div class="video-wrapper">
-    <video autoplay muted loop>
-      <source src="assets\videos\intro_video.mp4" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
+  <div id="intro_blur">
+    <div class="video-wrapper">
+      <video autoplay muted loop>
+        <source src="assets\videos\intro_video.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
   </div>
 </div>
 
@@ -312,7 +314,7 @@
       <h1 class="text-4xl md:text-6xl font-nauryz mb-4 animate-fade-in">
         <span class="text-accent">GLiF</span> Yours
       </h1>
-      <p class="text-gray-300 max-w-lg mx-auto animate-slide-up">Create your personalized GLiF profile picture or ticket Glif Yours</p>
+      <p class="text-gray-300 max-w-lg mx-auto animate-slide-up">Create your personalized Glif profile picture or ticket</p>
     </header>
     
     
@@ -567,6 +569,11 @@
             </button>
           </div>
         </div>
+      <div class="glassmorphism rounded-xl p-6 text-center">
+          <h3 class="text-xl font-bold mb-4">Share Your Design</h3>
+          <p class="text-gray-300 mb-4">If you like please use it. if you haven't making all of them (either PFP or Ticket), make them.</p>
+            </button>
+          </div>
       </div>
     </div>
     
@@ -596,6 +603,7 @@
         <script>document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))</script>
     </span>
     Glif - GlideFrame
+    </br> Powered by OpenStudio
 </div>
   </footer>
 </body>
