@@ -1,3 +1,7 @@
+ :root {
+        --dark-color: #001259;
+      }
+ 
  @font-face {
    font-family: NAURYZREDKEDS;
    src: url(../fonts/NAURYZREDKEDS.ttf);
