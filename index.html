@@ -82,12 +82,14 @@
         style1: '../assets/images/template_profile.png',
         style2: '../assets/images/template_profile_style2.png',
         style3: '../assets/images/template_profile_style3.png',
+        style4: '../assets/images/template_profile_style4.png',
         gen0: '../assets/images/template_profile_gen0.png'
       },
       ticket: {
         style1: '../assets/images/template_ticket.png',
         style2: '../assets/images/template_ticket_style2.png',
         style3: '../assets/images/template_ticket_style3.png',
+        style4: '../assets/images/template_ticket_style4.png',
         gen0: '../assets/images/template_ticket_gen0.png'
       }
     },
@@ -214,30 +216,42 @@
       const templateImg = new Image();
       templateImg.src = this.templates[this.category][this.templateVariant];
       await new Promise(resolve => templateImg.onload = resolve);
-      
-      canvas.width = templateImg.width;
-      canvas.height = templateImg.height;
-      
-      const userImg = new Image();
-      userImg.src = this.croppedImageDataURL;
-      await new Promise(resolve => userImg.onload = resolve);
-      
-      await this.scaleAndDrawImage(ctx, userImg, canvas.width, canvas.height);
-      
-      ctx.drawImage(templateImg, 0, 0);
-      
-      ctx.fillStyle = '#FFFFFF';
-      
-      // Different font sizes and positions for profile vs ticket
-      if (this.category === 'profile') {
-      ctx.font = '40px NAURYZREDKEDS';
-      ctx.fillText(this.userName, 50, canvas.height - 50);
-      } else if (this.category === 'ticket') {
-      ctx.font = '120px NAURYZREDKEDS'; // Bigger font for tickets
-      ctx.textAlign = 'left';
-      ctx.fillText(this.userName, canvas.width/2 - 150, canvas.height/2 + 50);
-      }
-      
+        
+        canvas.width = templateImg.width;
+        canvas.height = templateImg.height;
+        
+        const userImg = new Image();
+        userImg.src = this.croppedImageDataURL;
+        await new Promise(resolve => userImg.onload = resolve);
+        
+        await this.scaleAndDrawImage(ctx, userImg, canvas.width, canvas.height);
+        
+        ctx.drawImage(templateImg, 0, 0);
+        
+        // Set thin shadow for text
+        ctx.shadowColor = 'rgba(0,0,0,0.25)';
+        ctx.shadowBlur = 40;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 13;
+
+        ctx.fillStyle = '#FFFFFF';
+        
+        // Different font sizes and positions for profile vs ticket
+        if (this.category === 'profile') {
+        ctx.font = '40px NAURYZREDKEDS';
+        ctx.fillText(this.userName, 50, canvas.height - 50);
+        } else if (this.category === 'ticket') {
+        ctx.font = '120px NAURYZREDKEDS'; // Bigger font for tickets
+        ctx.textAlign = 'left';
+        ctx.fillText(this.userName, canvas.width/2 - 150, canvas.height/2 + 50);
+        }
+
+        // Reset shadow for any further drawing
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+        
       this.showNotification('Preview generated successfully!');
     },
     
@@ -253,13 +267,15 @@
       
       let cx, cy, radius;
       if (this.templateVariant === 'style1') {
-      cx = 338; cy = 540; radius = 217; // Moved left from 340 to 300
+      cx = 340; cy = 540; radius = 217; // Moved left from 340 to 300
       } else if (this.templateVariant === 'style2') {
-      cx = 338; cy = 540; radius = 217; // Moved left from 340 to 300
+      cx = 340; cy = 540; radius = 217; // Moved left from 340 to 300
       } else if (this.templateVariant === 'style3') {
-      cx = 338; cy = 540; radius = 217; // Moved left from 340 to 300
+      cx = 340; cy = 540; radius = 217; // Moved left from 340 to 300
+      } else if (this.templateVariant === 'style4') {
+      cx = 340; cy = 540; radius = 217; // Moved left from 340 to 300
       } else if (this.templateVariant === 'gen0') {
-      cx = 338; cy = 540; radius = 217; // Moved left from 340 to 300
+      cx = 340; cy = 540; radius = 217; // Moved left from 340 to 300
       }
       
       ctx.beginPath();
@@ -455,6 +471,26 @@
               </div>
               <p class="text-center mt-2 text-sm">Vintage</p>
             </div>
+
+            <div @click="selectTemplate('style4')" 
+                 class="template-option rounded-lg overflow-hidden shine-effect"
+                 :class="templateVariant === 'style4' ? 'selected' : ''">
+              <div class="aspect-square bg-dark flex items-center justify-center overflow-hidden">
+                <img src="../assets/images/template_profile_style4.png" alt="Profile Style 4" class="w-full h-auto object-contain">
+              </div>
+              <p class="text-center mt-2 text-sm">Calm</p>
+            </div>
+
+            <!-- Template For Next -->
+             <!-- <div @click="selectTemplate('styleX')" 
+                 class="template-option rounded-lg overflow-hidden shine-effect"
+                 :class="templateVariant === 'styleX' ? 'selected' : ''">
+              <div class="aspect-square bg-dark flex items-center justify-center overflow-hidden">
+                <img src="../assets/images/template_profile_styleX.png" alt="Profile Style X" class="w-full h-auto object-contain">
+              </div>
+              <p class="text-center mt-2 text-sm">XXX</p>
+            </div> -->
+
             <div @click="unlockedTemplates.profile.gen0 && selectTemplate('gen0')"
                  class="template-option rounded-lg overflow-hidden shine-effect"
                  :class="templateVariant === 'gen0' ? 'selected' : ''">
@@ -502,6 +538,25 @@
               </div>
               <p class="text-center mt-2 text-sm">Vintage</p>
             </div>
+
+            <div @click="selectTemplate('style4')" 
+                 class="template-option rounded-lg overflow-hidden shine-effect"
+                 :class="templateVariant === 'style4' ? 'selected' : ''">
+              <div class="aspect-video bg-dark flex items-center justify-center overflow-hidden">
+                <img src="../assets/images/template_ticket_style4.png" alt="Ticket Style 4" class="w-full h-auto object-contain">
+              </div>
+              <p class="text-center mt-2 text-sm">Calm</p>
+            </div>
+
+            <!-- Template For Next -->
+            <!-- <div @click="selectTemplate('styleX')" 
+                 class="template-option rounded-lg overflow-hidden shine-effect"
+                 :class="templateVariant === 'styleX' ? 'selected' : ''">
+              <div class="aspect-video bg-dark flex items-center justify-center overflow-hidden">
+                <img src="../assets/images/template_ticket_styleX.png" alt="Ticket Style X" class="w-full h-auto object-contain">
+              </div>
+              <p class="text-center mt-2 text-sm">XXX</p>
+            </div> -->
 
             <div @click="unlockedTemplates.ticket.gen0 && selectTemplate('gen0')"
                  class="template-option rounded-lg overflow-hidden shine-effect"
