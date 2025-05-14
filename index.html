@@ -368,14 +368,14 @@
               <div class="grid grid-cols-2 gap-4">
                 <button @click="selectCategory('profile')" 
                         class="py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center"
-                        :class="category === 'profile' ? 'bg-accent text-white' : 'bg-dark-light border border-gray-700 text-gray-300 hover:bg-gray-800'">
+                        :class="category === 'profile' ? 'bg-accent text-white' : 'bg-dark-light border border-gray-700 text-gray-300 hover:bg-gray-800 transition: all 0.5s ease'">
                   <i class="fa-solid fa-user-circle mr-2"></i>
                   Profile Picture
                 </button>
                 
                 <button @click="selectCategory('ticket')" 
                         class="py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center"
-                        :class="category === 'ticket' ? 'bg-accent text-white' : 'bg-dark-light border border-gray-700 text-gray-300 hover:bg-gray-800'">
+                        :class="category === 'ticket' ? 'bg-accent text-white' : 'bg-dark-light border border-gray-700 text-gray-300 hover:bg-gray-800 transition: all 0.5s ease'">
                   <i class="fa-solid fa-ticket mr-2"></i>
                   Ticket
                 </button>
@@ -414,7 +414,7 @@
        <!-- Continue Button -->
             <div class="pt-2 pb-10">
               <button @click="proceedToCrop()" 
-                      class="w-full bg-accent hover:bg-accent-hover text-white py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center">
+                      class="w-full bg-accent btn-accent flex items-center justify-center px-6 py-3 rounded-full text-white space-x-2 glow-on-hover">
                 <i class="fa-solid fa-arrow-right mr-2"></i> Continue to Crop
               </button>
             </div>
@@ -430,7 +430,7 @@
           <!-- Profile Templates (show when profile category is selected) -->
           <div x-show="category === 'profile'" class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div @click="selectTemplate('style1')" 
-                 class="template-option rounded-lg overflow-hidden"
+                 class="template-option rounded-lg overflow-hidden shine-effect"
                  :class="templateVariant === 'style1' ? 'selected' : ''">
               <div class="aspect-square bg-dark flex items-center justify-center overflow-hidden">
                 <img src="../assets/images/template_profile.png" alt="Profile Style 1" class="w-full h-auto object-contain">
@@ -439,7 +439,7 @@
             </div>
             
             <div @click="selectTemplate('style2')" 
-                 class="template-option rounded-lg overflow-hidden"
+                 class="template-option rounded-lg overflow-hidden shine-effect"
                  :class="templateVariant === 'style2' ? 'selected' : ''">
               <div class="aspect-square bg-dark flex items-center justify-center overflow-hidden">
                 <img src="../assets/images/template_profile_style2.png" alt="Profile Style 2" class="w-full h-auto object-contain">
@@ -448,37 +448,36 @@
             </div>
             
             <div @click="selectTemplate('style3')" 
-                 class="template-option rounded-lg overflow-hidden"
+                 class="template-option rounded-lg overflow-hidden shine-effect"
                  :class="templateVariant === 'style3' ? 'selected' : ''">
               <div class="aspect-square bg-dark flex items-center justify-center overflow-hidden">
                 <img src="../assets/images/template_profile_style3.png" alt="Profile Style 3" class="w-full h-auto object-contain">
               </div>
               <p class="text-center mt-2 text-sm">Vintage</p>
             </div>
-            <div class="template-option rounded-lg overflow-hidden"
+            <div @click="unlockedTemplates.profile.gen0 && selectTemplate('gen0')"
+                 class="template-option rounded-lg overflow-hidden shine-effect"
                  :class="templateVariant === 'gen0' ? 'selected' : ''">
               <div class="aspect-square bg-dark flex items-center justify-center overflow-hidden locked-template"
                    :class="unlockedTemplates.profile.gen0 ? 'unlocked' : ''">
                 <img src="../assets/images/template_profile_gen0.png" alt="Secret Profile" class="w-full h-auto object-contain">
                 <div class="lock-overlay" :class="unlockedTemplates.profile.gen0 ? 'hidden' : ''">
-                  <i class="fa-solid fa-lock text-3xl mb-2"></i>
+                  <i class="fa-solid fa-lock mb-2 "></i>
                   <p class="text-center text-sm mb-2">Secret Template</p>
                   <button @click.stop="unlockGEN0Template" 
-                          class="bg-accent hover:bg-accent-hover text-white py-2 px-4 rounded text-xs">
+                          class="btn-accent bg-accent hover:bg-accent-hover text-white py-2 px-4 rounded-full text-xs">
                     Unlock with Code
                   </button>
                 </div>
               </div>
-              <p class="text-center mt-2 text-sm">Secret</p>
+              <p x-text="(category === 'profile' && unlockedTemplates.profile.gen0) || (category === 'ticket' && unlockedTemplates.ticket.gen0) ? 'Glif City (GEN 0)' : 'Secret'" class="text-center mt-2 text-sm"></p>
             </div>
           </div>
-
-          
           
           <!-- Ticket Templates (show when ticket category is selected) -->
           <div x-show="category === 'ticket'" class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div @click="selectTemplate('style1')" 
-                 class="template-option rounded-lg overflow-hidden"
+                 class="template-option rounded-lg overflow-hidden shine-effect"
                  :class="templateVariant === 'style1' ? 'selected' : ''">
               <div class="aspect-video bg-dark flex items-center justify-center overflow-hidden">
                 <img src="../assets/images/template_ticket.png" alt="Ticket Style 1" class="w-full h-auto object-contain">
@@ -487,7 +486,7 @@
             </div>
             
             <div @click="selectTemplate('style2')" 
-                 class="template-option rounded-lg overflow-hidden"
+                 class="template-option rounded-lg overflow-hidden shine-effect"
                  :class="templateVariant === 'style2' ? 'selected' : ''">
               <div class="aspect-video bg-dark flex items-center justify-center overflow-hidden">
                 <img src="../assets/images/template_ticket_style2.png" alt="Ticket Style 2" class="w-full h-auto object-contain">
@@ -496,7 +495,7 @@
             </div>
             
             <div @click="selectTemplate('style3')" 
-                 class="template-option rounded-lg overflow-hidden"
+                 class="template-option rounded-lg overflow-hidden shine-effect"
                  :class="templateVariant === 'style3' ? 'selected' : ''">
               <div class="aspect-video bg-dark flex items-center justify-center overflow-hidden">
                 <img src="../assets/images/template_ticket_style3.png" alt="Ticket Style 3" class="w-full h-auto object-contain">
@@ -504,22 +503,22 @@
               <p class="text-center mt-2 text-sm">Vintage</p>
             </div>
 
-            <!-- Locked secret Template -->
-            <div class="template-option rounded-lg overflow-hidden"
+            <div @click="unlockedTemplates.ticket.gen0 && selectTemplate('gen0')"
+                 class="template-option rounded-lg overflow-hidden shine-effect"
                  :class="templateVariant === 'gen0' ? 'selected' : ''">
               <div class="aspect-video bg-dark flex items-center justify-center overflow-hidden locked-template"
                    :class="unlockedTemplates.ticket.gen0 ? 'unlocked' : ''">
                 <img src="../assets/images/template_ticket_gen0.png" alt="Secret Ticket" class="w-full h-auto object-contain">
                 <div class="lock-overlay" :class="unlockedTemplates.ticket.gen0 ? 'hidden' : ''">
-                  <i class="fa-solid fa-lock text-3xl mb-2"></i>
+                  <i class="fa-solid fa-lock mb-2"></i>
                   <p class="text-center text-sm mb-2">Secret Template</p>
                   <button @click.stop="unlockGEN0Template" 
-                          class="bg-accent hover:bg-accent-hover text-white py-2 px-4 rounded text-xs">
+                          class="btn-accent bg-accent hover:bg-accent-hover text-white py-2 px-4 rounded-full text-xs">
                     Unlock with Code
                   </button>
                 </div>
               </div>
-              <p class="text-center mt-2 text-sm">Secret</p>
+              <p x-text="(category === 'profile' && unlockedTemplates.profile.gen0) || (category === 'ticket' && unlockedTemplates.ticket.gen0) ? 'Glif City (GEN 0)' : 'Secret'" class="text-center mt-2 text-sm"></p>
             </div>
           </div>
         </div>
@@ -604,7 +603,7 @@
     </span>
     Glif - GlideFrame
     </br> Powered by OpenStudio
-</div>
+    </div>
   </footer>
 </body>
 </html>
