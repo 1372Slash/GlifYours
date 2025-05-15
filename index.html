@@ -462,7 +462,13 @@
           </h3>
           
           <!-- Profile Templates (show when profile category is selected) -->
-          <div x-show="category === 'profile'" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div x-show="category === 'profile'" 
+                x-transition:enter="transition-opacity ease-out duration-500"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
+                x-transition:leave="transition-opacity ease-in duration-400"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0" class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div @click="selectTemplate('style1')" 
                  class="template-option rounded-lg overflow-hidden shine-effect"
                  :class="templateVariant === 'style1' ? 'selected' : ''">
@@ -532,7 +538,14 @@
           </div>
           
           <!-- Ticket Templates (show when ticket category is selected) -->
-          <div x-show="category === 'ticket'" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div x-show="category === 'ticket'" 
+              x-transition:enter="transition-opacity ease-out duration-500"
+              x-transition:enter-start="opacity-0"
+              x-transition:enter-end="opacity-100"
+              x-transition:leave="transition-opacity ease-in duration-400"
+              x-transition:leave-start="opacity-100"
+              x-transition:leave-end="opacity-0"
+          class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div @click="selectTemplate('style1')" 
                  class="template-option rounded-lg overflow-hidden shine-effect"
                  :class="templateVariant === 'style1' ? 'selected' : ''">
