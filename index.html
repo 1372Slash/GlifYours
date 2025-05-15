@@ -515,7 +515,7 @@
             <div @click="unlockedTemplates.profile.gen0 && selectTemplate('gen0')"
                  class="template-option rounded-lg overflow-hidden shine-effect"
                  :class="templateVariant === 'gen0' ? 'selected' : ''">
-              <div class="aspect-square bg-dark flex items-center justify-center overflow-hidden locked-template"
+              <div class="aspect-square bg-dark flex items-center justify-center overflow-hidden locked-template" oncontextmenu="return false;"
                    :class="unlockedTemplates.profile.gen0 ? 'unlocked' : ''">
                 <img src="../assets/images/template_profile_gen0.png" alt="Secret Profile" class="w-full h-auto object-contain" oncontextmenu="return false;">
                 <div class="lock-overlay" :class="unlockedTemplates.profile.gen0 ? 'hidden' : ''">
@@ -577,7 +577,7 @@
                  class="template-option rounded-lg overflow-hidden shine-effect"
                  :class="templateVariant === 'styleX' ? 'selected' : ''">
               <div class="aspect-video bg-dark flex items-center justify-center overflow-hidden">
-                <img src="../assets/images/template_ticket_styleX.png" alt="Ticket Style X" class="w-full h-auto object-contain">
+                <img src="../assets/images/template_ticket_styleX.png" alt="Ticket Style X" class="w-full h-auto object-contain" oncontextmenu="return false;">
               </div>
               <p class="text-center mt-2 text-sm">XXX</p>
             </div> -->
@@ -585,7 +585,7 @@
             <div @click="unlockedTemplates.ticket.gen0 && selectTemplate('gen0')"
                  class="template-option rounded-lg overflow-hidden shine-effect"
                  :class="templateVariant === 'gen0' ? 'selected' : ''">
-              <div class="aspect-video bg-dark flex items-center justify-center overflow-hidden locked-template"
+              <div class="aspect-video bg-dark flex items-center justify-center overflow-hidden locked-template" oncontextmenu="return false;"
                    :class="unlockedTemplates.ticket.gen0 ? 'unlocked' : ''">
                 <img src="../assets/images/template_ticket_gen0.png" alt="Secret Ticket" class="w-full h-auto object-contain" oncontextmenu="return false;">
                 <div class="lock-overlay" :class="unlockedTemplates.ticket.gen0 ? 'hidden' : ''">
