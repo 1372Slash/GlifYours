@@ -1,7 +1,7 @@
- :root {
-        --dark-color: #001259;
-      }
- 
+:root {
+   --dark-color: #001259;
+ }
+
  @font-face {
    font-family: NAURYZREDKEDS;
    src: url(../fonts/NAURYZREDKEDS.ttf);
@@ -98,6 +98,13 @@
    cursor: pointer;
    background-color: black;
    padding-bottom: 10px;
+   -webkit-touch-callout: none;
+   /* Disable callout menu on long press */
+   -webkit-user-select: none;
+   /* Disable text selection */
+   -moz-user-select: none;
+   -ms-user-select: none;
+   user-select: none;
  }
 
  .template-option:hover {

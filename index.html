@@ -14,12 +14,13 @@
 
 
   <script>
+    // tailwind.config.js
     tailwind.config = {
       theme: {
         extend: {
           colors: {
             accent: '#F83E01',
-            'accent-hover': '#d63500',
+            'accent-hover': '#d63500', // Warna aksen untuk hover
             dark: '#121212',
             'dark-light': '#1E1E1E'
           },
@@ -388,17 +389,25 @@
             <!-- Category Selection -->
             <div>
               <label class="block text-sm font-medium mb-2 text-gray-300">Select Category</label>
-              <div class="grid grid-cols-2 gap-4">
-                <button @click="selectCategory('profile')" 
-                        class="py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center"
-                        :class="category === 'profile' ? 'bg-accent text-white' : 'bg-dark-light border border-gray-700 text-gray-300 hover:bg-gray-800 transition: all 0.5s ease'">
+              <div class="flex gap-2">
+                <!-- Tombol Profile Picture -->
+                <button 
+                  @click="selectCategory('profile')" 
+                  class="flex-1 py-3 px-4 transition duration-200 transform hover:scale-95 active:scale-90 flex items-center justify-center 
+                         border border-gray-700 text-gray-300 hover:bg-accent-hover 
+                         rounded-l-lg rounded-r-sm"
+                  :class="category === 'profile' ? 'bg-accent text-white' : ''">
                   <i class="fa-solid fa-user-circle mr-2"></i>
                   Profile Picture
                 </button>
-                
-                <button @click="selectCategory('ticket')" 
-                        class="py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center"
-                        :class="category === 'ticket' ? 'bg-accent text-white' : 'bg-dark-light border border-gray-700 text-gray-300 hover:bg-gray-800 transition: all 0.5s ease'">
+
+                <!-- Tombol Ticket -->
+                <button 
+                  @click="selectCategory('ticket')" 
+                  class="flex-1 py-3 px-4 transition duration-200 transform hover:scale-95 active:scale-90 flex items-center justify-center 
+                         border border-gray-700 text-gray-300 hover:bg-accent-hover 
+                         rounded-r-lg rounded-l-sm"
+                  :class="category === 'ticket' ? 'bg-accent text-white' : ''">
                   <i class="fa-solid fa-ticket mr-2"></i>
                   Ticket
                 </button>
@@ -456,7 +465,7 @@
                  class="template-option rounded-lg overflow-hidden shine-effect"
                  :class="templateVariant === 'style1' ? 'selected' : ''">
               <div class="aspect-square bg-dark flex items-center justify-center overflow-hidden">
-                <img src="../assets/images/template_profile.png" alt="Profile Style 1" class="w-full h-auto object-contain">
+                <img src="../assets/images/template_profile.png" alt="Profile Style 1" class="w-full h-auto object-contain" oncontextmenu="return false;">
               </div>
               <p class="text-center mt-2 text-sm">Real G.</p>
             </div>
@@ -465,7 +474,7 @@
                  class="template-option rounded-lg overflow-hidden shine-effect"
                  :class="templateVariant === 'style2' ? 'selected' : ''">
               <div class="aspect-square bg-dark flex items-center justify-center overflow-hidden">
-                <img src="../assets/images/template_profile_style2.png" alt="Profile Style 2" class="w-full h-auto object-contain">
+                <img src="../assets/images/template_profile_style2.png" alt="Profile Style 2" class="w-full h-auto object-contain" oncontextmenu="return false;">
               </div>
               <p class="text-center mt-2 text-sm">Neon</p>
             </div>
@@ -474,7 +483,7 @@
                  class="template-option rounded-lg overflow-hidden shine-effect"
                  :class="templateVariant === 'style3' ? 'selected' : ''">
               <div class="aspect-square bg-dark flex items-center justify-center overflow-hidden">
-                <img src="../assets/images/template_profile_style3.png" alt="Profile Style 3" class="w-full h-auto object-contain">
+                <img src="../assets/images/template_profile_style3.png" alt="Profile Style 3" class="w-full h-auto object-contain" oncontextmenu="return false;">
               </div>
               <p class="text-center mt-2 text-sm">Vintage</p>
             </div>
@@ -482,11 +491,11 @@
             <div @click="selectTemplate('style4')" 
                  class="template-option rounded-lg overflow-hidden shine-effect"
                  :class="templateVariant === 'style4' ? 'selected' : ''">
-                  <div class="absolute top-4 left-4 bg-accent px-3 py-1 rounded-full text-xs font-medium text-[var(--dark-color)]">
-                    <i class="bi bi-calendar-check me-1"></i> By 1372SLash
-                  </div>
+              <div class="absolute top-4 left-4 bg-accent px-3 py-1 rounded-full text-xs font-medium text-white">
+                <i class="bi bi-calendar-check me-1"></i> By 1372Slash
+              </div>
               <div class="aspect-square bg-dark flex items-center justify-center overflow-hidden">
-                <img src="../assets/images/template_profile_style4.png" alt="Profile Style 4" class="w-full h-auto object-contain">
+                <img src="../assets/images/template_profile_style4.png" alt="Profile Style 4" class="w-full h-auto object-contain" oncontextmenu="return false;">
               </div>
               <p class="text-center mt-2 text-sm">Calm</p>
             </div>
@@ -526,7 +535,7 @@
                  class="template-option rounded-lg overflow-hidden shine-effect"
                  :class="templateVariant === 'style1' ? 'selected' : ''">
               <div class="aspect-video bg-dark flex items-center justify-center overflow-hidden">
-                <img src="../assets/images/template_ticket.png" alt="Ticket Style 1" class="w-full h-auto object-contain">
+                <img src="../assets/images/template_ticket.png" alt="Ticket Style 1" class="w-full h-auto object-contain" oncontextmenu="return false;">
               </div>
               <p class="text-center mt-2 text-sm">Real G.</p>
             </div>
@@ -535,7 +544,7 @@
                  class="template-option rounded-lg overflow-hidden shine-effect"
                  :class="templateVariant === 'style2' ? 'selected' : ''">
               <div class="aspect-video bg-dark flex items-center justify-center overflow-hidden">
-                <img src="../assets/images/template_ticket_style2.png" alt="Ticket Style 2" class="w-full h-auto object-contain">
+                <img src="../assets/images/template_ticket_style2.png" alt="Ticket Style 2" class="w-full h-auto object-contain" oncontextmenu="return false;">
               </div>
               <p class="text-center mt-2 text-sm">Neon</p>
             </div>
@@ -544,7 +553,7 @@
                  class="template-option rounded-lg overflow-hidden shine-effect"
                  :class="templateVariant === 'style3' ? 'selected' : ''">
               <div class="aspect-video bg-dark flex items-center justify-center overflow-hidden">
-                <img src="../assets/images/template_ticket_style3.png" alt="Ticket Style 3" class="w-full h-auto object-contain">
+                <img src="../assets/images/template_ticket_style3.png" alt="Ticket Style 3" class="w-full h-auto object-contain" oncontextmenu="return false;">
               </div>
               <p class="text-center mt-2 text-sm">Vintage</p>
             </div>
@@ -552,11 +561,11 @@
             <div @click="selectTemplate('style4')" 
                  class="template-option rounded-lg overflow-hidden shine-effect"
                  :class="templateVariant === 'style4' ? 'selected' : ''">
-                  <div class="absolute top-4 left-4 bg-accent px-3 py-1 rounded-full text-xs font-medium text-[var(--dark-color)]">
-                    <i class="bi bi-calendar-check me-1"></i> By 1372SLash
-                  </div>
+              <div class="absolute top-4 left-4 bg-accent px-3 py-1 rounded-full text-xs font-medium text-white">
+                <i class="bi bi-calendar-check me-1"></i> By 1372Slash
+              </div>
               <div class="aspect-video bg-dark flex items-center justify-center overflow-hidden">
-                <img src="../assets/images/template_ticket_style4.png" alt="Ticket Style 4" class="w-full h-auto object-contain">
+                <img src="../assets/images/template_ticket_style4.png" alt="Ticket Style 4" class="w-full h-auto object-contain" oncontextmenu="return false;">
               </div>
               <p class="text-center mt-2 text-sm">Calm</p>
             </div>
