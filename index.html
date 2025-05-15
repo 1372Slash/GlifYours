@@ -393,10 +393,10 @@
                 <!-- Tombol Profile Picture -->
                 <button 
                   @click="selectCategory('profile')" 
-                  class="flex-1 py-3 px-4 transition duration-200 transform hover:scale-95 active:scale-90 flex items-center justify-center 
-                         border border-gray-700 text-gray-300 hover:bg-accent-hover 
-                         rounded-l-lg rounded-r-sm"
-                  :class="category === 'profile' ? 'bg-accent text-white' : ''">
+                  class="flex-1 py-3 px-4 transition duration-200 transform  active:scale-90 flex items-center justify-center rounded-l-lg rounded-r-sm"
+                  :class="category === 'profile' 
+                    ? 'btn-accent glow-on-hover text-white' 
+                    : 'bg-dark-light text-gray-400 border border-gray-700 hover:bg-gray-800'">
                   <i class="fa-solid fa-user-circle mr-2"></i>
                   Profile Picture
                 </button>
@@ -404,10 +404,10 @@
                 <!-- Tombol Ticket -->
                 <button 
                   @click="selectCategory('ticket')" 
-                  class="flex-1 py-3 px-4 transition duration-200 transform hover:scale-95 active:scale-90 flex items-center justify-center 
-                         border border-gray-700 text-gray-300 hover:bg-accent-hover 
-                         rounded-r-lg rounded-l-sm"
-                  :class="category === 'ticket' ? 'bg-accent text-white' : ''">
+                  class="flex-1 py-3 px-4 transition duration-200 transform active:scale-90 flex items-center justify-center rounded-r-lg rounded-l-sm"
+                  :class="category === 'ticket' 
+                    ? 'btn-accent glow-on-hover text-white' 
+                    : 'btn-nonactive bg-dark-light text-gray-400 border border-gray-700 hover:bg-gray-800'">
                   <i class="fa-solid fa-ticket mr-2"></i>
                   Ticket
                 </button>
@@ -614,11 +614,18 @@
           </div>
         </div>
         
-        <div class="flex justify-between gap-4">
-          <button @click="step = 1" class="flex-1 py-3 px-6 rounded-lg border border-gray-600 hover:bg-gray-800 transition duration-200 flex items-center justify-center">
+        <div class="flex gap-2">
+          <!-- Tombol Back -->
+          <button 
+            @click="step = 1" 
+            class="flex-1 py-3 px-6 transition duration-200 transform active:scale-90 flex items-center justify-center btn-nonactive border border-gray-700 text-gray-400 bg-dark-light hover:bg-gray-800 rounded-l-lg rounded-r-sm">
             <i class="fa-solid fa-arrow-left mr-2"></i> Back
           </button>
-          <button @click="cropImage()" class="flex-1 bg-accent hover:bg-accent-hover text-white py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center">
+
+          <!-- Tombol Apply Crop -->
+          <button 
+            @click="cropImage()" 
+            class="flex-1 py-3 px-6 transition duration-200 transform active:scale-90 flex items-center justify-center btn-accent glow-on-hover text-white rounded-r-lg rounded-l-sm">
             <i class="fa-solid fa-check mr-2"></i> Apply Crop
           </button>
         </div>
@@ -637,10 +644,10 @@
           </div>
           
           <div class="flex flex-col md:flex-row justify-center gap-4">
-            <button @click="step = 1" class="py-3 px-6 rounded-lg border border-gray-600 hover:bg-gray-800 transition duration-200 flex items-center justify-center">
+            <button @click="step = 1" class="btn-nonactive py-3 px-6 rounded-lg border border-gray-600 hover:bg-gray-800 transition duration-200 flex items-center justify-center">
               <i class="fa-solid fa-pencil mr-2"></i> Edit Again
             </button>
-            <button @click="exportImage()" class="bg-accent hover:bg-accent-hover text-white py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center">
+            <button @click="exportImage()" class="btn-accent bg-accent hover:bg-accent-hover text-white py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center">
               <i class="fa-solid fa-download mr-2"></i> Export Image
             </button>
           </div>

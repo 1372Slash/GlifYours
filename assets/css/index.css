@@ -278,6 +278,14 @@
    transform: translateY(-2px);
  }
 
+  .btn-nonactive {
+    transition: all 0.3s ease;
+  }
+  .btn-nonactive:hover {
+   /* box-shadow: 0 5px 15px rgba(255, 87, 34, 0.4); */
+   transform: translateY(-2px);
+ }
+
  .shine-effect::before {
    content: '';
    position: absolute;
