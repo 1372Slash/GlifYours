@@ -412,6 +412,7 @@
                   Ticket
                 </button>
               </div>
+              <p class="mt-2 text-xs text-gray-400">Scroll down to see other template style.</p>
             </div>
             
             
@@ -426,6 +427,7 @@
                        class="w-full bg-dark-light border border-gray-700 rounded-lg py-3 pl-10 pr-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition duration-200" 
                        placeholder="Enter your account name">
               </div>
+              <p class="mt-2 text-xs text-gray-400">Use your social media username.</p>
             </div>
             
             <!-- Image Upload -->
@@ -515,7 +517,7 @@
                  :class="templateVariant === 'gen0' ? 'selected' : ''">
               <div class="aspect-square bg-dark flex items-center justify-center overflow-hidden locked-template"
                    :class="unlockedTemplates.profile.gen0 ? 'unlocked' : ''">
-                <img src="../assets/images/template_profile_gen0.png" alt="Secret Profile" class="w-full h-auto object-contain">
+                <img src="../assets/images/template_profile_gen0.png" alt="Secret Profile" class="w-full h-auto object-contain" oncontextmenu="return false;">
                 <div class="lock-overlay" :class="unlockedTemplates.profile.gen0 ? 'hidden' : ''">
                   <i class="fa-solid fa-lock mb-2 "></i>
                   <p class="text-center text-sm mb-2">Secret Template</p>
@@ -585,7 +587,7 @@
                  :class="templateVariant === 'gen0' ? 'selected' : ''">
               <div class="aspect-video bg-dark flex items-center justify-center overflow-hidden locked-template"
                    :class="unlockedTemplates.ticket.gen0 ? 'unlocked' : ''">
-                <img src="../assets/images/template_ticket_gen0.png" alt="Secret Ticket" class="w-full h-auto object-contain">
+                <img src="../assets/images/template_ticket_gen0.png" alt="Secret Ticket" class="w-full h-auto object-contain" oncontextmenu="return false;">
                 <div class="lock-overlay" :class="unlockedTemplates.ticket.gen0 ? 'hidden' : ''">
                   <i class="fa-solid fa-lock mb-2"></i>
                   <p class="text-center text-sm mb-2">Secret Template</p>
