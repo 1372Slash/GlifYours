@@ -84,7 +84,7 @@
     templateVariant: 'style1',
     userName: '',
     fileName: '',
-    validCodes: ['CODE1', 'CODE2', 'CODE3', 'CODE4', 'CODE5', 'GEN0'],
+    validCodes: ['CODE1', 'CODE2', 'CODE3', 'CODE4', 'CODE5', 'GEN0', 'BESOUND'],
     cropper: null,
     croppedImageDataURL: null,
     templates: {
@@ -93,26 +93,30 @@
         style2: '../assets/images/template_profile_style2.png',
         style3: '../assets/images/template_profile_style3.png',
         style4: '../assets/images/template_profile_style4.png',
-        gen0: '../assets/images/template_profile_gen0.png'
+        gen0: '../assets/images/template_profile_gen0.png',
+        gSoundM25: '../assets/images/template_profile_gSoundM25.png'
       },
       ticket: {
         style1: '../assets/images/template_ticket.png',
         style2: '../assets/images/template_ticket_style2.png',
         style3: '../assets/images/template_ticket_style3.png',
         style4: '../assets/images/template_ticket_style4.png',
-        gen0: '../assets/images/template_ticket_gen0.png'
+        gen0: '../assets/images/template_ticket_gen0.png',
+        gSoundM25: '../assets/images/template_ticket_gSoundM25.png'
       }
     },
 
     unlockedTemplates: {
       profile: {
-        gen0: false
+        gen0: false,
+        gSoundM25: false
       },
       ticket: {
-        gen0: false
+        gen0: false,
+        gSoundM25: false
       }
-      
     },
+    
     notification: { show: false, message: '' },
        readyToCrop: false,
     
@@ -165,6 +169,18 @@
           !this.unlockedTemplates[this.category].gen0) {
 
         this.showNotification('Please unlock the gen0 template first!');
+
+        return;
+
+      }
+
+      // Check if user selected a gen0 template but hasn't unlocked it
+
+      if ((this.templateVariant === 'gSoundM25') && 
+
+          !this.unlockedTemplates[this.category].gSoundM25) {
+
+        this.showNotification('Please unlock the template first!');
 
         return;
 
@@ -286,6 +302,8 @@
       cx = 340; cy = 540; radius = 217; // Moved left from 340 to 300
       } else if (this.templateVariant === 'gen0') {
       cx = 340; cy = 540; radius = 217; // Moved left from 340 to 300
+      } else if (this.templateVariant === 'gSoundM25') {
+      cx = 340; cy = 540; radius = 217; // Moved left from 340 to 300
       }
       
       ctx.beginPath();
@@ -317,10 +335,12 @@
     },
     
     selectTemplate(variant) {
+      if ((variant === 'gen0' && !this.unlockedTemplates[this.category].gen0) ||
+          (variant === 'gSoundM25' && !this.unlockedTemplates[this.category].gSoundM25)) {
+        return;
+      }
       this.templateVariant = variant;
-        },
-
-    
+    },
 
     unlockGEN0Template() {
       const code = prompt('Enter unlock code for secret template:');
@@ -328,6 +348,17 @@
         this.unlockedTemplates[this.category].gen0 = true;
         this.templateVariant = 'gen0';
         this.showNotification('Gen 0 template unlocked!');
+      } else {
+        this.showNotification('Invalid unlock code!');
+      }
+    },
+
+    unlockPSM25Template() {
+      const code = prompt('Enter unlock code for secret template:');
+      if (code === 'BESOUND') {
+        this.unlockedTemplates[this.category].gSoundM25 = true;
+        this.templateVariant = 'gSoundM25';
+        this.showNotification('People Sound - May 25 template unlocked!');
       } else {
         this.showNotification('Invalid unlock code!');
       }
@@ -517,7 +548,7 @@
               <p class="text-center mt-2 text-sm">XXX</p>
             </div> -->
 
-            <div @click="unlockedTemplates.profile.gen0 && selectTemplate('gen0')"
+            <div @click="templateVariant === 'gen0' && unlockedTemplates.profile.gen0 ? selectTemplate('gen0') : unlockGEN0Template()"
               class="template-option rounded-lg overflow-hidden shine-effect"
               :class="templateVariant === 'gen0' ? 'selected' : ''">
               <div class="aspect-square bg-dark flex items-center justify-center overflow-hidden locked-template"
@@ -536,6 +567,27 @@
               <p x-text="(category === 'profile' && unlockedTemplates.profile.gen0) || (category === 'ticket' && unlockedTemplates.ticket.gen0) ? 'Glif City (GEN 0)' : 'Secret'"
                 class="text-center mt-2 text-sm"></p>
             </div>
+
+            <div @click="templateVariant === 'gSoundM25' && unlockedTemplates.profile.gSoundM25 ? selectTemplate('gSoundM25') : unlockPSM25Template()"
+              class="template-option rounded-lg overflow-hidden shine-effect"
+              :class="templateVariant === 'gSoundM25' ? 'selected' : ''">
+              <div class="aspect-square bg-dark flex items-center justify-center overflow-hidden locked-template"
+                oncontextmenu="return false;" :class="unlockedTemplates.profile.gSoundM25 ? 'unlocked' : ''">
+                <img src="../assets/images/template_profile_gSoundM25.png" alt="Secret Profile"
+                  class="w-full h-auto object-contain" oncontextmenu="return false;">
+                <div class="lock-overlay" :class="unlockedTemplates.profile.gSoundM25 ? 'hidden' : ''">
+                  <i class="fa-solid fa-lock mb-2 "></i>
+                  <p class="text-center text-sm mb-2">Secret Template</p>
+                  <button @click.stop="unlockPSM25Template"
+                    class="btn-accent bg-accent hover:bg-accent-hover text-white py-2 px-4 rounded-full text-xs">
+                    Unlock with Code
+                  </button>
+                </div>
+              </div>
+              <p x-text="(category === 'profile' && unlockedTemplates.profile.gSoundM25) || (category === 'ticket' && unlockedTemplates.ticket.gSoundM25) ? 'G. People Sound - Mei 25' : 'Secret'"
+                class="text-center mt-2 text-sm"></p>
+            </div>
+
           </div>
 
           <!-- Ticket Templates (show when ticket category is selected) -->
@@ -592,7 +644,7 @@
               <p class="text-center mt-2 text-sm">XXX</p>
             </div> -->
 
-            <div @click="unlockedTemplates.ticket.gen0 && selectTemplate('gen0')"
+            <div @click="templateVariant === 'gen0' && unlockedTemplates.ticket.gen0 ? selectTemplate('gen0') : unlockGEN0Template()"
               class="template-option rounded-lg overflow-hidden shine-effect"
               :class="templateVariant === 'gen0' ? 'selected' : ''">
               <div class="aspect-video bg-dark flex items-center justify-center overflow-hidden locked-template"
@@ -611,6 +663,27 @@
               <p x-text="(category === 'profile' && unlockedTemplates.profile.gen0) || (category === 'ticket' && unlockedTemplates.ticket.gen0) ? 'Glif City (GEN 0)' : 'Secret'"
                 class="text-center mt-2 text-sm"></p>
             </div>
+
+            <div @click="templateVariant === 'gSoundM25' && unlockedTemplates.ticket.gSoundM25 ? selectTemplate('gSoundM25') : unlockPSM25Template()"
+              class="template-option rounded-lg overflow-hidden shine-effect"
+              :class="templateVariant === 'gSoundM25' ? 'selected' : ''">
+              <div class="aspect-video bg-dark flex items-center justify-center overflow-hidden locked-template"
+                oncontextmenu="return false;" :class="unlockedTemplates.ticket.gSoundM25 ? 'unlocked' : ''">
+                <img src="../assets/images/template_ticket_gSoundM25.png" alt="Secret Ticket"
+                  class="w-full h-auto object-contain" oncontextmenu="return false;">
+                <div class="lock-overlay" :class="unlockedTemplates.ticket.gSoundM25 ? 'hidden' : ''">
+                  <i class="fa-solid fa-lock mb-2"></i>
+                  <p class="text-center text-sm mb-2">Secret Template</p>
+                  <button @click.stop="unlockPSM25Template"
+                    class="btn-accent bg-accent hover:bg-accent-hover text-white py-2 px-4 rounded-full text-xs">
+                    Unlock with Code
+                  </button>
+                </div>
+              </div>
+              <p x-text="(category === 'profile' && unlockedTemplates.profile.gSoundM25) || (category === 'ticket' && unlockedTemplates.ticket.gSoundM25) ? 'G. People Sound - Mei 25' : 'Secret'"
+                class="text-center mt-2 text-sm"></p>
+            </div>
+            
           </div>
         </div>
       </div>
