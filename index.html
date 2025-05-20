@@ -335,10 +335,26 @@
     },
     
     selectTemplate(variant) {
-      if ((variant === 'gen0' && !this.unlockedTemplates[this.category].gen0) ||
-          (variant === 'gSoundM25' && !this.unlockedTemplates[this.category].gSoundM25)) {
+      // Hapus pengecekan yang ada dan ganti dengan yang baru
+      if (variant === 'gen0') {
+        if (this.unlockedTemplates[this.category].gen0) {
+          this.templateVariant = variant;
+        } else {
+          this.unlockGEN0Template();
+        }
         return;
       }
+
+      if (variant === 'gSoundM25') {
+        if (this.unlockedTemplates[this.category].gSoundM25) {
+          this.templateVariant = variant;
+        } else {
+          this.unlockPSM25Template();
+        }
+        return;
+      }
+
+      // Untuk template non-secret, langsung set
       this.templateVariant = variant;
     },
 
@@ -548,7 +564,8 @@
               <p class="text-center mt-2 text-sm">XXX</p>
             </div> -->
 
-            <div @click="templateVariant === 'gen0' && unlockedTemplates.profile.gen0 ? selectTemplate('gen0') : unlockGEN0Template()"
+            <!-- Untuk template Gen 0 -->
+            <div @click="selectTemplate('gen0')"
               class="template-option rounded-lg overflow-hidden shine-effect"
               :class="templateVariant === 'gen0' ? 'selected' : ''">
               <div class="aspect-square bg-dark flex items-center justify-center overflow-hidden locked-template"
@@ -568,7 +585,8 @@
                 class="text-center mt-2 text-sm"></p>
             </div>
 
-            <div @click="templateVariant === 'gSoundM25' && unlockedTemplates.profile.gSoundM25 ? selectTemplate('gSoundM25') : unlockPSM25Template()"
+            <!-- Untuk template gSoundM25 -->
+            <div @click="selectTemplate('gSoundM25')"
               class="template-option rounded-lg overflow-hidden shine-effect"
               :class="templateVariant === 'gSoundM25' ? 'selected' : ''">
               <div class="aspect-square bg-dark flex items-center justify-center overflow-hidden locked-template"
@@ -644,7 +662,8 @@
               <p class="text-center mt-2 text-sm">XXX</p>
             </div> -->
 
-            <div @click="templateVariant === 'gen0' && unlockedTemplates.ticket.gen0 ? selectTemplate('gen0') : unlockGEN0Template()"
+            <!-- Untuk template Gen 0 -->
+            <div @click="selectTemplate('gen0')"
               class="template-option rounded-lg overflow-hidden shine-effect"
               :class="templateVariant === 'gen0' ? 'selected' : ''">
               <div class="aspect-video bg-dark flex items-center justify-center overflow-hidden locked-template"
@@ -664,7 +683,8 @@
                 class="text-center mt-2 text-sm"></p>
             </div>
 
-            <div @click="templateVariant === 'gSoundM25' && unlockedTemplates.ticket.gSoundM25 ? selectTemplate('gSoundM25') : unlockPSM25Template()"
+            <!-- Untuk template gSoundM25 -->
+            <div @click="selectTemplate('gSoundM25')"
               class="template-option rounded-lg overflow-hidden shine-effect"
               :class="templateVariant === 'gSoundM25' ? 'selected' : ''">
               <div class="aspect-video bg-dark flex items-center justify-center overflow-hidden locked-template"
